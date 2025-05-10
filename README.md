@@ -10,3 +10,6 @@
 ## Công nghệ
 - Ngôn ngữ: Java
 - Thư viện: Retrofit, Glide, Room, AlarmManager
+
+## Phân Công Công Việc
+Xem chi tiết phân công công việc cho nhóm tại [TASK_ASSIGNMENT.md](TASK_ASSIGNMENT.md).
