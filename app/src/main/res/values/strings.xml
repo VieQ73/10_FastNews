@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">10 FastNews</string>
+    <string name="app_name">FastNews</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="watch_later">Watch Later</string>
+    <string name="settings">Settings</string>
 </resources>
