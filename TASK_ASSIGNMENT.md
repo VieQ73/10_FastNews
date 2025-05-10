@@ -13,7 +13,6 @@ Dưới đây là bảng phân công công việc cho nhóm 5 thành viên phát
 ## Hướng Dẫn Sử Dụng
 - Mỗi thành viên tạo branch riêng (VD: `feature/truong van tan`, `feature/do phuong thao`, ...) để phát triển chức năng.
 - Commit thường xuyên và tạo pull request để trưởng nhóm (Lê Đình Quý) review.
-- Tham khảo đặc tả phần mềm trong `README.md` để hiểu rõ yêu cầu.
 
 ## Liên Hệ
 Nếu có thắc mắc về phân công, liên hệ trưởng nhóm.
