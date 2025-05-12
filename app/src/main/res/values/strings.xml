@@ -4,4 +4,6 @@
     <string name="search">Search</string>
     <string name="watch_later">Watch Later</string>
     <string name="settings">Settings</string>
+    <string name="share_button_description">Chia sẻ bài viết</string>
+    <string name="share_news_text">Xem bài viết này: %1$s\n%2$s</string>
 </resources>
