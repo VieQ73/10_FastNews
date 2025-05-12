@@ -34,4 +34,6 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment:2.8.3")
     implementation("androidx.navigation:navigation-ui:2.8.3")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 }
