@@ -20,41 +20,118 @@
             android:layout_height="wrap_content"
             android:visibility="visible">
 
-            <!-- Placeholder shimmer danh mục + bài viết -->
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <View android:layout_width="match_parent" android:layout_height="40dp" android:background="@android:color/darker_gray"/>
-                <View android:layout_width="match_parent" android:layout_height="200dp" android:layout_marginTop="8dp" android:background="@android:color/darker_gray"/>
-                <View android:layout_width="match_parent" android:layout_height="300dp" android:layout_marginTop="8dp" android:background="@android:color/darker_gray"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginVertical="4dp"
+                    android:background="@android:color/darker_gray" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginVertical="4dp"
+                    android:background="@android:color/darker_gray" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginVertical="4dp"
+                    android:background="@android:color/darker_gray" />
             </LinearLayout>
         </com.facebook.shimmer.ShimmerFrameLayout>
 
-        <!-- Danh mục tin tức -->
-        <HorizontalScrollView
+        <!-- Danh mục tin tức bằng RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/navRV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:visibility="gone"
-            android:id="@+id/categoryScroll">
-
-            <LinearLayout
-                android:id="@+id/categoryContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <!-- Category buttons sẽ được thêm động -->
-            </LinearLayout>
-        </HorizontalScrollView>
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:clipToPadding="false"
+            android:scrollbars="horizontal"
+            android:overScrollMode="never"
+            android:nestedScrollingEnabled="false" />
 
         <!-- Tin tức nổi bật -->
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/highlightViewPager"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/imgNews1"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="8dp"
-            android:visibility="gone" />
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- Ảnh đại diện tin tức -->
+                <ImageView
+                    android:id="@+id/imgOfNews1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="Ảnh tin tức" />
+
+                <!-- Overlay mờ để dễ đọc chữ -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#80000000" />
+
+                <!-- Nội dung tin -->
+                <LinearLayout
+                    android:id="@+id/textContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:layout_alignParentBottom="true">
+
+                    <TextView
+                        android:id="@+id/titleOfNews1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tiêu đề tin tức"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:maxLines="2"
+                        android:ellipsize="end" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="4dp">
+
+                        <TextView
+                            android:id="@+id/nameOfNews1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nguồn tin"
+                            android:textColor="@android:color/white"
+                            android:textSize="12sp"
+                            android:layout_marginEnd="8dp" />
+
+                        <TextView
+                            android:id="@+id/timeAgoOfNews1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="2 giờ trước"
+                            android:textColor="@android:color/white"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
 
         <!-- Danh sách tin tức -->
         <androidx.recyclerview.widget.RecyclerView
@@ -63,7 +140,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:nestedScrollingEnabled="false"
-            android:visibility="gone" />
+            android:visibility="gone"
+            />
 
         <!-- Không có dữ liệu -->
         <LinearLayout
@@ -78,7 +156,7 @@
             <ImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/ic_no_data"
+                android:src="@drawable/ic_android_black_24dp"
                 android:contentDescription="Không có dữ liệu" />
 
             <TextView
