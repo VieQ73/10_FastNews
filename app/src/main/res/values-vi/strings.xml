@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Tin Nhanh</string>
+    <string name="home">Trang Chủ</string>
+    <string name="search">Tìm Kiếm</string>
+    <string name="watch_later">Xem Sau</string>
+    <string name="settings">Cài Đặt</string>
+</resources>
