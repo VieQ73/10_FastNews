@@ -1,4 +1,4 @@
-package com.example.fastnews;
+package com.example.news;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;

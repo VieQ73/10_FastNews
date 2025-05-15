@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-// NewsAdapter.java
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
     private List<com.example.fastnews.NewsModel> newsList;
     private Context context;
@@ -33,13 +32,13 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
         com.example.fastnews.NewsModel news = newsList.get(position);
         holder.title.setText(news.getTitle());
-        // Tải hình ảnh bằng Glide (theo tài liệu)
+        // Tải hình ảnh bằng Glide
         Glide.with(context)
                 .load(news.getImageUrl())
                 .placeholder(R.drawable.news_placeholder_img)
                 .into(holder.image);
 
-        // Xử lý nút chia sẻ
+        // Xử lý nút chia sẻ: Chia sẻ tiêu đề và URL bài viết qua Intent
         holder.shareButton.setOnClickListener(v -> {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
@@ -49,7 +48,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
                     news.getUrl()
             );
             shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
-            shareIntent.putE`xtra(Intent.EXTRA_SUBJECT, news.getTitle());
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, news.getTitle());
             context.startActivity(Intent.createChooser(shareIntent, "Chia sẻ qua"));
         });
     }

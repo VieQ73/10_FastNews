@@ -1,4 +1,4 @@
-package com.example.fastnews;
+package com.example.news;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -21,6 +21,7 @@ public class NewsModel {
     }
 
     public boolean getTitle() {
+        return false;
     }
 
     public static class Article {
