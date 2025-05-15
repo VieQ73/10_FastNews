@@ -20,6 +20,9 @@ public class NewsModel {
         return articles;
     }
 
+    public boolean getTitle() {
+    }
+
     public static class Article {
         @SerializedName("title")
         private String title;

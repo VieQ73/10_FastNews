@@ -1,11 +1,22 @@
 package com.example.news;
 
+import android.content.Context;
+import android.content.Intent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
 // NewsAdapter.java
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
-    private List<NewsModel> newsList;
+    private List<com.example.fastnews.NewsModel> newsList;
     private Context context;
 
-    public NewsAdapter(Context context, List<NewsModel> newsList) {
+    public NewsAdapter(Context context, List<com.example.fastnews.NewsModel> newsList) {
         this.context = context;
         this.newsList = newsList;
     }
@@ -20,7 +31,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
-        NewsModel news = newsList.get(position);
+        com.example.fastnews.NewsModel news = newsList.get(position);
         holder.title.setText(news.getTitle());
         // Tải hình ảnh bằng Glide (theo tài liệu)
         Glide.with(context)
@@ -38,7 +49,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
                     news.getUrl()
             );
             shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
-            shareIntent.putExtra(Intent.EXTRA_SUBJECT, news.getTitle());
+            shareIntent.putE`xtra(Intent.EXTRA_SUBJECT, news.getTitle());
             context.startActivity(Intent.createChooser(shareIntent, "Chia sẻ qua"));
         });
     }
