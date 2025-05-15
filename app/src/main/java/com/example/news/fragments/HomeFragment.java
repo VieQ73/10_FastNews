@@ -12,6 +12,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.news.R;
+import com.example.news.adapters.NavbarAdapter;
+
 import java.util.ArrayList;
 
 // HomeFragment hiển thị danh sách các danh mục tin tức và tin tức cho mỗi danh mục.
