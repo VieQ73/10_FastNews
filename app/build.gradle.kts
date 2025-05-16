@@ -33,6 +33,10 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.preference:preference:1.2.0")
+    implementation("com.android.support:appcompat-v7:28.0.0")
+    implementation("com.android.support.constraint:constraint-layout:2.0.4")
+    implementation("android.arch.lifecycle:livedata:1.1.1")
+    implementation("android.arch.lifecycle:viewmodel:1.1.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
@@ -43,7 +47,6 @@ dependencies {
     implementation("org.jsoup:jsoup:1.15.4")
     implementation("com.facebook.shimmer:shimmer:0.5.0")
     implementation("androidx.work:work-runtime:2.9.1")
-    implementation ("com.google.android.material:material:1.12.0")
 
 
 
