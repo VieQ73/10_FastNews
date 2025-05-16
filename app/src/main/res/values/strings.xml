@@ -9,4 +9,12 @@
 
 
     <string name="select_language">Select Language</string>
+    <string name="settings_title">Settings</string>
+    <string name="notifications_section">Notifications</string>
+    <string name="show_notifications">Show Notifications</string>
+    <string name="show_notifications_desc">Turn on Notifications to get notified about the latest news.</string>
+    <string name="first_notification_at">1st Notification at:</string>
+    <string name="first_notification_desc">This will be the 1st notification of the day.</string>
+    <string name="share_news">Share News</string>
+    <string name="share_news_desc">Share news articles with others.</string>
 </resources>
