@@ -1,4 +1,4 @@
-package com.example.news;
+package com.example.news.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.news.R;
 
 import java.util.List;
 
