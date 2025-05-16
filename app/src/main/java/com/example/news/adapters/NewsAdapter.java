@@ -1,6 +1,7 @@
 package com.example.news.adapters;
 
 import android.content.Context;
+import android.icu.text.SimpleDateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.news.R;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.TimeZone;
+import java.util.logging.Logger;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
@@ -46,7 +53,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                 .into(holder.newsImg);
         holder.newsTitle.setText(articles.getTitle());
         holder.newsSource.setText(articles.getSource().getName());
-        holder.newsTimeAgo.setText(articles.getPublishedAt());
+        holder.newsTimeAgo.setText(getTimeAgo(articles.getPublishedAt()));
 
         holder.itemView.setOnClickListener(view ->{
 
@@ -55,7 +62,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return 0;
+        return arrayList != null ? arrayList.size() : 0;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -69,6 +76,36 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             newsSource = itemView.findViewById(R.id.newsSource);
             newsTimeAgo = itemView.findViewById(R.id.newsTimeAgo);
         }
+    }
+
+    public interface OverlayVisibilityListener {
+        void showOverlay();
+        void hideOverlay();
+    }
+
+    public static String getTimeAgo(String time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+
+        try {
+            Date past = sdf.parse(time);
+            Date now = new Date();
+
+            long seconds = (now.getTime() - past.getTime()) / 1000;
+
+            if (seconds < 60)
+                return "Vài giây trước";
+            else if (seconds < 3600)
+                return (seconds / 60) + " phút trước";
+            else if (seconds < 86400)
+                return (seconds / 3600) + " giờ trước";
+            else
+                return (seconds / 86400) + " ngày trước";
+
+        } catch (ParseException e) {
+            Logger.getLogger(Objects.requireNonNull(e.getMessage()));
+        }
+
+        return time;
     }
 
 }
