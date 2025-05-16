@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,64 +13,89 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- SHIMMER cho phần nổi bật -->
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/shimmerHighlight"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginBottom="8dp"
-            android:visibility="visible">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:background="@android:color/darker_gray"
-                android:layout_marginVertical="4dp" />
-        </com.facebook.shimmer.ShimmerFrameLayout>
-
-        <!-- Tin tức nổi bật -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/imgNews1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-            <!-- nội dung RelativeLayout của tin nổi bật giữ nguyên -->
-        </androidx.cardview.widget.CardView>
-
-        <!-- SHIMMER cho danh sách tin -->
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/shimmerNewsList"
+        <!-- RecyclerView cho danh mục -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/navbarRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        <!-- Shimmer cho toàn bộ nội dung -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerFrameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <!-- 3 shimmer item mô phỏng bài viết -->
+                <!-- Shimmer cho bài viết nổi bật -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginBottom="8dp"/>
+                <!-- Shimmer cho danh sách tin tức -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:layout_marginVertical="6dp"
-                    android:background="@android:color/darker_gray" />
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginVertical="6dp"/>
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:layout_marginVertical="6dp"
-                    android:background="@android:color/darker_gray" />
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginVertical="6dp"
-                    android:background="@android:color/darker_gray" />
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginVertical="6dp"/>
             </LinearLayout>
         </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <!-- Tin tức nổi bật -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/imgNews1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:visibility="gone"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/imgOfNews1"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="Hình ảnh tin tức nổi bật"/>
+
+                <TextView
+                    android:id="@+id/titleOfNews1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="Tiêu đề tin tức"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/nameOfNews1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="8dp"
+                    android:paddingBottom="8dp"
+                    android:text="Nguồn tin"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/darker_gray"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <!-- Danh sách tin tức -->
         <androidx.recyclerview.widget.RecyclerView
@@ -80,59 +104,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:nestedScrollingEnabled="false"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
-        <!-- Không có dữ liệu -->
-        <LinearLayout
-            android:id="@+id/emptyStateLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_marginTop="32dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/ic_android_black_24dp"
-                android:contentDescription="Không có dữ liệu" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Không có tin tức"
-                android:textAppearance="?attr/textAppearanceSubtitle1"
-                android:layout_marginTop="16dp"/>
-        </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
-=======
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <!-- RecyclerView cho Navbar (Danh mục tin tức) -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/navbarRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp"
-        tools:listitem="@layout/nav_items_layout"/> <!-- Để preview các item trong design view -->
-
-    <!-- Placeholder cho nội dung tin tức (sẽ được thay thế bằng RecyclerView hoặc ViewPager) -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Nội dung tin tức sẽ được hiển thị ở đây..."
-        android:textSize="18sp"
-        android:gravity="center"
-        android:padding="16dp"
-        android:background="#eee"/>
-
-</LinearLayout>
->>>>>>> origin/develop
