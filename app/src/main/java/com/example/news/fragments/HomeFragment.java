@@ -4,51 +4,79 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.news.NewsModel;
+import com.example.news.R;
+import com.example.news.adapters.NavbarAdapter;
+import com.example.news.adapters.NewsAdapter;
+import com.facebook.shimmer.ShimmerFrameLayout;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 // HomeFragment hiển thị danh sách các danh mục tin tức và tin tức cho mỗi danh mục.
 public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryClickListener {
 
-    private RecyclerView navbarRecyclerView; // RecyclerView để hiển thị danh sách danh mục (navbar)
-    private NavbarAdapter navbarAdapter; // Adapter cho RecyclerView
-    private ArrayList<String> navItems = new ArrayList<>(); // Danh sách các mục điều hướng (tên các danh mục tin tức)
+    RecyclerView navRV, newsRV;
+    NavbarAdapter navAdapter;
+    NewsAdapter newsAdapter;
+    ArrayList<String> navArrayList = new ArrayList<>();
+    ArrayList<NewsModel.Articles> newsArrayList = new ArrayList<>();
 
-    // Phương thức này được gọi khi Fragment được tạo.
+    ImageView imgOfNews1;
+    CardView imgNews1;
+    TextView titleOfNews1, nameOfNews1, timeAgoOfNews1, newsStatus;
+
+    String defaultLanguage, defaultCountry;
+    int defaultMaxNews;
+
+    ShimmerFrameLayout shimmerFrameLayout, shimmerNews1;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate layout cho Fragment (fragment_home.xml)
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // Tìm RecyclerView (navbarRecyclerView) trong layout
-        navbarRecyclerView = view.findViewById(R.id.navbarRecyclerView);
-        // Thiết lập LayoutManager cho RecyclerView (hiển thị danh sách ngang)
-        navbarRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        imgNews1 = view.findViewById(R.id.imgNews1);
+        imgOfNews1 = view.findViewById(R.id.imgOfNews1);
+        titleOfNews1 = view.findViewById(R.id.titleOfNews1);
+        nameOfNews1 = view.findViewById(R.id.nameOfNews1);
+        timeAgoOfNews1 = view.findViewById(R.id.timeAgoOfNews1);
+        newsStatus = view.findViewById(R.id.newsStatus);
+        shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);
+        shimmerNews1 = view.findViewById(R.id.shimmerNews1);
+        navRV = view.findViewById(R.id.navRV);
+        newsRV = view.findViewById(R.id.newsRV);
 
-        // Thêm các danh mục tin tức vào danh sách
-        navItems.add("Sports");
-        navItems.add("Entertainment");
-        navItems.add("Technology");
-        navItems.add("Business");
-        navItems.add("Health");
+        navArrayList.addAll(Arrays.asList("Tổng quát", "Giải trí", "Kinh doanh", "Thể thao", "Sức khỏe", "Công nghệ"));
+        navAdapter = new NavbarAdapter(navArrayList, getContext());
+        navRV.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        navRV.setAdapter(navAdapter);
+        navAdapter.setOnCategoryClickListener(this);
 
-        // Tạo NavbarAdapter và gán danh sách các mục điều hướng và context
-        navbarAdapter = new NavbarAdapter(navItems, getContext());
-        // Gán listener cho sự kiện click danh mục (HomeFragment implement OnCategoryClickListener)
-        navbarAdapter.setOnCategoryClickListener(this);
-        // Gán adapter cho RecyclerView
-        navbarRecyclerView.setAdapter(navbarAdapter);
+        newsAdapter = new NewsAdapter(newsArrayList, getContext(), "Trang chủ");
+        newsRV.setLayoutManager(new LinearLayoutManager(getContext()));
+        newsRV.setAdapter(newsAdapter);
 
-        return view; // Trả về View đã được inflate
+        shimmerFrameLayout.startShimmer();
+        shimmerNews1.startShimmer();
+
+        return view;
     }
+
 
     // Phương thức này được gọi khi một danh mục được click trong NavbarAdapter.
     @Override

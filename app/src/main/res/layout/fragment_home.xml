@@ -41,6 +41,7 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
+                    android:id="@+id/imgOfNews1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
@@ -105,7 +106,7 @@
 
         <!-- Featured Title -->
         <TextView
-            android:id="@+id/featuredTitle"
+            android:id="@+id/newsStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tin tức nổi bật"
@@ -120,7 +121,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:visibility="visible"
-            app:layout_constraintTop_toBottomOf="@id/featuredTitle"
+            app:layout_constraintTop_toBottomOf="@id/newsStatus"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:shimmer_auto_start="true"

@@ -39,9 +39,6 @@ public class NewsModel {
             return source;
         }
 
-        public void setSource(Source source) {
-            this.source = source;
-        }
 
         public String getTitle() {
             return title;
