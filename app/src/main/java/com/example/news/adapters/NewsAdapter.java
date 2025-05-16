@@ -1,21 +1,25 @@
-package com.example.news;
+package com.example.news.adapters;
 
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.news.R;
+
 import java.util.List;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
-    private List<com.example.fastnews.NewsModel> newsList;
+    private List<com.example.news.NewsModel> newsList;
     private Context context;
 
-    public NewsAdapter(Context context, List<com.example.fastnews.NewsModel> newsList) {
+    public NewsAdapter(Context context, List<com.example.news.NewsModel> newsList) {
         this.context = context;
         this.newsList = newsList;
     }
@@ -30,7 +34,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
-        com.example.fastnews.NewsModel news = newsList.get(position);
+        com.example.news.NewsModel news = newsList.get(position);
         holder.title.setText(news.getTitle());
         // Tải hình ảnh bằng Glide
         Glide.with(context)
