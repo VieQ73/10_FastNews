@@ -12,15 +12,17 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
+        <!-- Nav RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/navRV"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="18dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Image CardView -->
         <androidx.cardview.widget.CardView
             android:id="@+id/imgNews1"
             android:layout_width="0dp"
@@ -36,7 +38,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -56,18 +58,18 @@
                         android:id="@+id/titleOfNews1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toTopOf="@id/detailsRelativeLayout"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/detailsRelativeLayout"
                         app:layout_constraintBottom_margin="10dp" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/detailsRelativeLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent">
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent">
 
                         <TextView
                             android:id="@+id/nameOfNews1"
@@ -86,38 +88,77 @@
             </FrameLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Shimmer Image -->
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/shimmerNews1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            app:shimmer_auto_start="true"
-            app:shimmer_duration="1500"
             app:layout_constraintTop_toBottomOf="@id/imgNews1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:shimmer_auto_start="true"
+            app:shimmer_duration="1500">
 
             <include layout="@layout/shimmer_card_news_item" />
         </com.facebook.shimmer.ShimmerFrameLayout>
 
+        <!-- Featured Title -->
         <TextView
             android:id="@+id/featuredTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tin nổi bật"
+            android:text="Tin tức nổi bật"
             android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/shimmerNews1"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <!-- Shimmer List -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerFrameLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:layout_constraintTop_toBottomOf="@id/featuredTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:shimmer_auto_start="true"
+            app:shimmer_duration="1500">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:clipToPadding="false">
+
+                <include layout="@layout/shimmer_news_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                     />
+
+                <include layout="@layout/shimmer_news_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                     />
+
+                <include layout="@layout/shimmer_news_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                     />
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <!-- News RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/newsRecyclerView"
+            android:id="@+id/newsRV"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:nestedScrollingEnabled="false"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/featuredTitle"
+            android:nestedScrollingEnabled="false"
+            app:layout_constraintTop_toBottomOf="@id/shimmerFrameLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

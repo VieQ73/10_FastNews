@@ -4,40 +4,49 @@
     android:layout_width="match_parent"
     android:layout_height="200dp"
     android:layout_margin="12dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="6dp">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <!-- Background Overlay -->
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#66000000" />
+            android:background="#AA6A5ACD" /> <!-- Màu tím mờ nhẹ -->
+
+        <!-- Nội dung -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <!-- Thanh tiêu đề -->
             <View
-                android:id="@+id/shimmerTitle"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="56dp"
+                android:layout_height="16dp"
                 android:layout_above="@+id/detailsRelativeLayout"
+                android:layout_marginBottom="12dp"
+                android:layout_alignParentBottom="false"
                 android:background="@drawable/bg_shimmer_rounded" />
 
-            <View
-                android:layout_above="@+id/detailsRelativeLayout"
-                android:id="@+id/shimmerSourceTime"
-                android:layout_width="60dp"
-                android:layout_height="16dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/bg_shimmer_rounded" />
+            <!-- Phần chi tiết -->
+            <RelativeLayout
+                android:id="@+id/detailsRelativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+
+                <!-- Thanh thời gian -->
+                <View
+                    android:layout_width="120dp"
+                    android:layout_height="16dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/bg_shimmer_rounded" />
+            </RelativeLayout>
         </RelativeLayout>
     </FrameLayout>
-
 </androidx.cardview.widget.CardView>
