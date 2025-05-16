@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">FastNews</string>
-    <string name="home">Home</string>
-    <string name="search">Search</string>
-    <string name="watch_later">Watch Later</string>
-    <string name="settings">Settings</string>
-    <string name="share_button_description">Chia sẻ bài viết</string>
-    <string name="share_news_text">Xem bài viết này: %1$s\n%2$s</string>
+    <string name="settings_title">Settings</string>
+    <string name="notifications_section">Notifications</string>
+    <string name="show_notifications">Show Notifications</string>
+    <string name="show_notifications_desc">Turn on Notifications to get notified about the latest news.</string>
+    <string name="first_notification_at">1st Notification at:</string>
+    <string name="first_notification_desc">This will be the 1st notification of the day.</string>
+    <string name="share_news">Share News</string>
+    <string name="share_news_desc">Share news articles with others.</string>
 </resources>
