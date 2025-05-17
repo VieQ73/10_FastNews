@@ -4,64 +4,153 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.example.news.NewsApi;
+import com.example.news.NewsModel;
 import com.example.news.R;
 import com.example.news.adapters.NavbarAdapter;
+import com.example.news.adapters.NewsAdapter;
+import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
-// HomeFragment hiển thị danh sách các danh mục tin tức và tin tức cho mỗi danh mục.
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+// HomeFragment hiển thị danh sách danh mục và tin tức
 public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryClickListener {
 
-    private RecyclerView navbarRecyclerView; // RecyclerView để hiển thị danh sách danh mục (navbar)
-    private NavbarAdapter navbarAdapter; // Adapter cho RecyclerView
-    private ArrayList<String> navItems = new ArrayList<>(); // Danh sách các mục điều hướng (tên các danh mục tin tức)
+    private RecyclerView navbarRecyclerView, newsRecyclerView;
+    private NavbarAdapter navbarAdapter;
+    private NewsAdapter newsAdapter;
+    private ArrayList<String> navItems = new ArrayList<>();
+    private ArrayList<NewsModel.Articles> newsItems = new ArrayList<>();
 
-    // Phương thức này được gọi khi Fragment được tạo.
+    private CardView imgNews1;
+    private ImageView imgOfNews1;
+    private TextView titleOfNews1, nameOfNews1;
+    private ShimmerFrameLayout shimmerFrameLayout;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate layout cho Fragment (fragment_home.xml)
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // Tìm RecyclerView (navbarRecyclerView) trong layout
+        // Khởi tạo giao diện bài viết nổi bật
+        imgNews1 = view.findViewById(R.id.imgNews1);
+        imgOfNews1 = view.findViewById(R.id.imgOfNews1);
+        titleOfNews1 = view.findViewById(R.id.titleOfNews1);
+        nameOfNews1 = view.findViewById(R.id.nameOfNews1);
+
+        // Khởi tạo ShimmerFrameLayout
+        shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);
+        shimmerFrameLayout.startShimmer();
+
+        // Khởi tạo RecyclerView cho danh mục
         navbarRecyclerView = view.findViewById(R.id.navbarRecyclerView);
-        // Thiết lập LayoutManager cho RecyclerView (hiển thị danh sách ngang)
         navbarRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        // Thêm các danh mục tin tức vào danh sách
+        // Thêm danh mục tin tức
         navItems.add("Sports");
         navItems.add("Entertainment");
         navItems.add("Technology");
         navItems.add("Business");
         navItems.add("Health");
 
-        // Tạo NavbarAdapter và gán danh sách các mục điều hướng và context
         navbarAdapter = new NavbarAdapter(navItems, getContext());
-        // Gán listener cho sự kiện click danh mục (HomeFragment implement OnCategoryClickListener)
         navbarAdapter.setOnCategoryClickListener(this);
-        // Gán adapter cho RecyclerView
         navbarRecyclerView.setAdapter(navbarAdapter);
 
-        return view; // Trả về View đã được inflate
+        // Khởi tạo RecyclerView cho tin tức
+        newsRecyclerView = view.findViewById(R.id.newsRecyclerView);
+        newsAdapter = new NewsAdapter(newsItems, getContext(), "Home");
+        newsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        newsRecyclerView.setAdapter(newsAdapter);
+
+        // Tải tin tức mặc định
+        getNews("Sports");
+
+        return view;
     }
 
-    // Phương thức này được gọi khi một danh mục được click trong NavbarAdapter.
+    // Xử lý khi nhấn danh mục
     @Override
     public void onCategoryClick(String category) {
-        // Xử lý khi người dùng nhấn vào một danh mục
-        // Hiển thị một Toast message để thông báo danh mục đã được click
-        Toast.makeText(getContext(), "Category clicked: " + category, Toast.LENGTH_SHORT).show();
-        // TODO: Load tin tức tương ứng với danh mục này
+        shimmerFrameLayout.setVisibility(View.VISIBLE);
+        shimmerFrameLayout.startShimmer();
+        newsRecyclerView.setVisibility(View.GONE);
+        imgNews1.setVisibility(View.GONE);
+        getNews(category);
+    }
 
-        //Ví dụ: có thể tạo một hàm để load tin tức:
-        // loadNewsByCategory(category);
+    // Tải tin tức từ GNews API
+    private void getNews(String category) {
+        String API_KEY = "ca9fed4acd8ed6f43b8b793edfde087b";
+        String BASE_URL = "https://gnews.io/api/v4/";
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        NewsApi newsApi = retrofit.create(NewsApi.class);
+        Call<NewsModel> call = newsApi.getNewsByCategory(API_KEY, category.toLowerCase(), "en", "us", 10);
+
+        call.enqueue(new Callback<NewsModel>() {
+            @Override
+            public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
+                newsRecyclerView.setVisibility(View.VISIBLE);
+                imgNews1.setVisibility(View.VISIBLE);
+
+                if (response.isSuccessful() && response.body() != null) {
+                    List<NewsModel.Articles> articles = response.body().getArticles();
+                    if (articles != null && !articles.isEmpty()) {
+                        // Hiển thị bài viết nổi bật
+                        NewsModel.Articles firstArticle = articles.get(0);
+                        titleOfNews1.setText(firstArticle.getTitle());
+                        nameOfNews1.setText(firstArticle.getSource().getName());
+                        Glide.with(getContext()).load(firstArticle.getUrlToImage())
+                                .placeholder(R.drawable.news_placeholder_img)
+                                .into(imgOfNews1);
+
+                        // Thêm sự kiện nhấn cho bài viết nổi bật
+                        imgOfNews1.setOnClickListener(v -> {
+                            Toast.makeText(getContext(), "Clicked: " + firstArticle.getTitle(), Toast.LENGTH_SHORT).show();
+                        });
+
+                        // Cập nhật danh sách tin tức
+                        newsItems.clear();
+                        newsItems.addAll(articles.subList(1, articles.size()));
+                        newsAdapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(getContext(), "No news available", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NewsModel> call, Throwable t) {
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Failed to load news", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
