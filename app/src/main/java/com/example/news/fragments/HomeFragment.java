@@ -5,6 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+<<<<<<< HEAD
+import android.widget.LinearLayout;
+=======
+>>>>>>> 483bc3c5061cd5878fe0d84af5d33002a66d6423
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,13 +19,22 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+<<<<<<< HEAD
+=======
 import com.bumptech.glide.Glide;
 import com.example.news.NewsApi;
+>>>>>>> 483bc3c5061cd5878fe0d84af5d33002a66d6423
 import com.example.news.NewsModel;
 import com.example.news.R;
 import com.example.news.adapters.NavbarAdapter;
 import com.example.news.adapters.NewsAdapter;
 import com.facebook.shimmer.ShimmerFrameLayout;
+<<<<<<< HEAD
+
+import java.util.ArrayList;
+import java.util.Arrays;
+=======
+>>>>>>> 483bc3c5061cd5878fe0d84af5d33002a66d6423
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +48,23 @@ import retrofit2.converter.gson.GsonConverterFactory;
 // HomeFragment hiển thị danh sách danh mục và tin tức
 public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryClickListener {
 
+<<<<<<< HEAD
+    RecyclerView navRV, newsRV;
+    NavbarAdapter navAdapter;
+    NewsAdapter newsAdapter;
+    ArrayList<String> navArrayList = new ArrayList<>();
+    ArrayList<NewsModel.Articles> newsArrayList = new ArrayList<>();
+
+    ImageView imgOfNews1;
+    CardView imgNews1;
+    TextView titleOfNews1, nameOfNews1, timeAgoOfNews1, newsStatus;
+
+    String defaultLanguage, defaultCountry;
+    int defaultMaxNews;
+
+    ShimmerFrameLayout shimmerFrameLayout, shimmerNews1;
+
+=======
     private RecyclerView navbarRecyclerView, newsRecyclerView;
     private NavbarAdapter navbarAdapter;
     private NewsAdapter newsAdapter;
@@ -45,17 +75,42 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
     private ImageView imgOfNews1;
     private TextView titleOfNews1, nameOfNews1;
     private ShimmerFrameLayout shimmerFrameLayout;
+>>>>>>> 483bc3c5061cd5878fe0d84af5d33002a66d6423
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+<<<<<<< HEAD
+=======
         // Khởi tạo giao diện bài viết nổi bật
+>>>>>>> 483bc3c5061cd5878fe0d84af5d33002a66d6423
         imgNews1 = view.findViewById(R.id.imgNews1);
         imgOfNews1 = view.findViewById(R.id.imgOfNews1);
         titleOfNews1 = view.findViewById(R.id.titleOfNews1);
         nameOfNews1 = view.findViewById(R.id.nameOfNews1);
+<<<<<<< HEAD
+        timeAgoOfNews1 = view.findViewById(R.id.timeAgoOfNews1);
+        newsStatus = view.findViewById(R.id.newsStatus);
+        shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);
+        shimmerNews1 = view.findViewById(R.id.shimmerNews1);
+        navRV = view.findViewById(R.id.navRV);
+        newsRV = view.findViewById(R.id.newsRV);
+
+        navArrayList.addAll(Arrays.asList("Tổng quát", "Giải trí", "Kinh doanh", "Thể thao", "Sức khỏe", "Công nghệ"));
+        navAdapter = new NavbarAdapter(navArrayList, getContext());
+        navRV.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        navRV.setAdapter(navAdapter);
+        navAdapter.setOnCategoryClickListener(this);
+
+        newsAdapter = new NewsAdapter(newsArrayList, getContext(), "Trang chủ");
+        newsRV.setLayoutManager(new LinearLayoutManager(getContext()));
+        newsRV.setAdapter(newsAdapter);
+
+        shimmerFrameLayout.startShimmer();
+        shimmerNews1.startShimmer();
+=======
 
         // Khởi tạo ShimmerFrameLayout
         shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);
@@ -84,11 +139,17 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
 
         // Tải tin tức mặc định
         getNews("Sports");
+>>>>>>> 483bc3c5061cd5878fe0d84af5d33002a66d6423
 
         return view;
     }
 
+<<<<<<< HEAD
+
+    // Phương thức này được gọi khi một danh mục được click trong NavbarAdapter.
+=======
     // Xử lý khi nhấn danh mục
+>>>>>>> 483bc3c5061cd5878fe0d84af5d33002a66d6423
     @Override
     public void onCategoryClick(String category) {
         shimmerFrameLayout.setVisibility(View.VISIBLE);

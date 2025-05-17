@@ -1,40 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="30sp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:layout_marginBottom="16dp"
+    android:padding="12dp"
+    app:shimmer_auto_start="true"
+    app:shimmer_duration="1500">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        android:layout_margin="4dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <ImageView
-                android:layout_width="80sp"
-                android:layout_height="80sp" />
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <!-- Ảnh shimmer -->
+            <View
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/bg_shimmer_rounded"
+                android:layout_marginEnd="12dp" />
+
+            <!-- Nội dung shimmer -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center_vertical">
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="16sp" />
+                    android:layout_height="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bg_shimmer_rounded" />
 
                 <View
-                    android:layout_width="150sp"
-                    android:layout_height="12sp" />
+                    android:layout_width="145dp"
+                    android:layout_height="15dp"
+                    android:layout_marginBottom="6dp"
+                    android:background="@drawable/bg_shimmer_rounded" />
 
                 <View
-                    android:layout_width="100sp"
-                    android:layout_height="12sp" />
+                    android:layout_width="75dp"
+                    android:layout_height="15dp"
+                    android:background="@drawable/bg_shimmer_rounded" />
+            </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </com.facebook.shimmer.ShimmerFrameLayout>

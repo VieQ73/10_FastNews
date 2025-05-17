@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.news.R;
+
 import java.util.ArrayList;
 
 // NavbarAdapter là một Adapter cho RecyclerView, được sử dụng để hiển thị danh sách các danh mục tin tức
