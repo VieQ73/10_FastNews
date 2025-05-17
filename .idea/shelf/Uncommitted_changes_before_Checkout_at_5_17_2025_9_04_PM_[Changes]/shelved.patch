@@ -1,0 +1,33 @@
+Index: app/src/main/java/com/example/news/adapters/NewsAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.news.adapters;\r\n\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageView;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.bumptech.glide.Glide;\r\nimport com.example.fastnews.NewsModel; // Package sai, mô phỏng lỗi\r\nimport com.example.news.R;\r\nimport com.example.news.utils.NewsDetailBottomSheet;\r\n\r\nimport java.text.ParseException;\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.Date;\r\nimport java.util.List;\r\nimport java.util.Locale;\r\n\r\npublic class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {\r\n    private List<com.example.fastnews.NewsModel> newsList;\r\n    private Context context;\r\n    private String fragment;\r\n\r\n    public NewsAdapter(Context context, List<com.example.fastnews.NewsModel> newsList, String fragment) {\r\n        this.context = context;\r\n        this.newsList = newsList;\r\n        this.fragment = fragment;\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {\r\n        View view = LayoutInflater.from(parent.getContext())\r\n                .inflate(R.layout.news_item_layout, parent, false);\r\n        return new NewsViewHolder(view);\r\n    }\r\n\r\n    @Override\r\n    public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {\r\n        com.example.fastnews.NewsModel news = newsList.get(position);\r\n        holder.title.setText(news.getTitle());\r\n        holder.newsSource.setText(news.getSource().getName());\r\n        holder.newsTimeAgo.setText(timeDifference(news.getPublishedAt()));\r\n\r\n        // Tải hình ảnh bằng Glide\r\n        Glide.with(context)\r\n                .load(news.getImageUrl())\r\n                .placeholder(R.drawable.news_placeholder_img)\r\n                .into(holder.image);\r\n\r\n        holder.itemView.setOnClickListener(v -> {\r\n            NewsDetailBottomSheet bottomSheet = new NewsDetailBottomSheet();\r\n            bottomSheet.setNewsData(\r\n                    news.getImageUrl(),\r\n                    news.getSource().getName(),\r\n                    news.getTitle(),\r\n                    timeDifference(news.getPublishedAt()),\r\n                    news.getUrl(),\r\n                    news.getContent()\r\n            );\r\n            bottomSheet.show(((AppCompatActivity) context).getSupportFragmentManager(), \"newsDetailBottomSheet\");\r\n        });\r\n\r\n        holder.shareButton.setOnClickListener(v -> {\r\n            Intent shareIntent = new Intent(Intent.ACTION_SEND);\r\n            shareIntent.setType(\"text/plain\");\r\n            String shareText = news.getTitle() + \"\\n\" + news.getUrl();\r\n            shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);\r\n            context.startActivity(Intent.createChooser(shareIntent, \"Chia sẻ tin tức\"));\r\n        });\r\n    }\r\n\r\n    @Override\r\n    public int getItemCount() {\r\n        return newsList.size();\r\n    }\r\n\r\n    // Hàm tính thời gian chênh lệch\r\n    public static String timeDifference(String dateTimeString) {\r\n        try {\r\n            SimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ss'Z'\", Locale.getDefault());\r\n            Date date = sdf.parse(dateTimeString);\r\n            long diffInMillis = System.currentTimeMillis() - date.getTime();\r\n            long minutes = diffInMillis / (1000 * 60);\r\n            if (minutes < 60) {\r\n                return minutes + \" phút trước\";\r\n            } else {\r\n                return (minutes / 60) + \" giờ trước\";\r\n            }\r\n        } catch (ParseException e) {\r\n            return dateTimeString;\r\n        }\r\n    }\r\n\r\n    static class NewsViewHolder extends RecyclerView.ViewHolder {\r\n        TextView title, newsSource, newsTimeAgo;\r\n        ImageView image, shareButton;\r\n\r\n        NewsViewHolder(@NonNull View itemView) {\r\n            super(itemView);\r\n            title = itemView.findViewById(R.id.news_title);\r\n            newsSource = itemView.findViewById(R.id.newsSource);\r\n            newsTimeAgo = itemView.findViewById(R.id.newsTimeAgo);\r\n            image = itemView.findViewById(R.id.news_image);\r\n            shareButton = itemView.findViewById(R.id.share_button);\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/news/adapters/NewsAdapter.java b/app/src/main/java/com/example/news/adapters/NewsAdapter.java
+--- a/app/src/main/java/com/example/news/adapters/NewsAdapter.java	(revision 483bc3c5061cd5878fe0d84af5d33002a66d6423)
++++ b/app/src/main/java/com/example/news/adapters/NewsAdapter.java	(date 1747490661501)
+@@ -13,7 +13,7 @@
+ import androidx.recyclerview.widget.RecyclerView;
+ 
+ import com.bumptech.glide.Glide;
+-import com.example.fastnews.NewsModel; // Package sai, mô phỏng lỗi
++import com.example.news.NewsModel; // Package sai, mô phỏng lỗi
+ import com.example.news.R;
+ import com.example.news.utils.NewsDetailBottomSheet;
+ 
+@@ -24,11 +24,11 @@
+ import java.util.Locale;
+ 
+ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
+-    private List<com.example.fastnews.NewsModel> newsList;
++    private List<com.example.news.NewsModel> newsList;
+     private Context context;
+     private String fragment;
+ 
+-    public NewsAdapter(Context context, List<com.example.fastnews.NewsModel> newsList, String fragment) {
++    public NewsAdapter(Context context, List<com.example.news.NewsModel> newsList, String fragment) {
+         this.context = context;
+         this.newsList = newsList;
+         this.fragment = fragment;
