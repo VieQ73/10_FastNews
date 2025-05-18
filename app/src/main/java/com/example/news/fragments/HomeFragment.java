@@ -67,8 +67,6 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
 
     SharedPreferencesHelper helper;
 
-
-
     public HomeFragment() {
     }
 
@@ -114,7 +112,7 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
 
         // Khởi tạo RecyclerView cho tin tức
         newsRecyclerView = view.findViewById(R.id.newsRV);
-        newsAdapter = new NewsAdapter(newsItems, getContext(), "Home");
+        newsAdapter = new NewsAdapter(newsItems, getContext(), "Home", this);
         newsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         newsRecyclerView.setAdapter(newsAdapter);
 
@@ -162,22 +160,29 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
                     if (articles != null && !articles.isEmpty()) {
                         // Hiển thị bài viết nổi bật
                         NewsModel.Articles firstArticle = articles.get(0);
-                        titleOfNews1.setText(firstArticle.getTitle());
-                        nameOfNews1.setText(firstArticle.getSource().getName());
-                        Glide.with(getContext()).load(firstArticle.getUrlToImage())
-                                .placeholder(R.drawable.news_placeholder_img)
-                                .into(imgOfNews1);
+                        updateUIWithFirstArticle(firstArticle);
 
                         // Thêm sự kiện nhấn cho bài viết nổi bật
                         imgOfNews1.setOnClickListener(v -> {
                             Toast.makeText(getContext(), "Clicked: " + firstArticle.getTitle(), Toast.LENGTH_SHORT).show();
                         });
 
+                        mainLL.setVisibility(View.VISIBLE);
+                        noNewsLL.setVisibility(View.GONE);
+
                         // Cập nhật danh sách tin tức
                         newsItems.clear();
                         newsItems.addAll(articles.subList(1, articles.size()));
                         newsAdapter.notifyDataSetChanged();
                     } else {
+                        shimmerFrameLayout.stopShimmer();
+                        shimmerFrameLayout.setVisibility(View.GONE);
+                        shimmerNews1.stopShimmer();
+                        shimmerNews1.setVisibility(View.GONE);
+                        newsRecyclerView.setVisibility(View.VISIBLE);
+                        imgNews1.setVisibility(View.VISIBLE);
+                        mainLL.setVisibility(View.GONE);
+                        noNewsLL.setVisibility(View.VISIBLE);
                         Toast.makeText(getContext(), "No news available", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -187,6 +192,12 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
             public void onFailure(Call<NewsModel> call, Throwable t) {
                 shimmerFrameLayout.stopShimmer();
                 shimmerFrameLayout.setVisibility(View.GONE);
+                shimmerNews1.stopShimmer();
+                shimmerNews1.setVisibility(View.GONE);
+                newsRecyclerView.setVisibility(View.VISIBLE);
+                imgNews1.setVisibility(View.VISIBLE);
+                mainLL.setVisibility(View.GONE);
+                noNewsLL.setVisibility(View.VISIBLE);
                 Toast.makeText(getContext(), "Failed to load news", Toast.LENGTH_SHORT).show();
             }
         });
