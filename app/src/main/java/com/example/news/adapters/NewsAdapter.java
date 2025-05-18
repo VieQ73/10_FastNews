@@ -159,7 +159,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         } catch (ParseException e) {
             return dateTimeString;
         }
-
         return dateTimeString;
     }
 }
