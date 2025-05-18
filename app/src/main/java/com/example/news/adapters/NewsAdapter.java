@@ -2,47 +2,43 @@ package com.example.news.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.icu.text.SimpleDateFormat;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.example.news.NewsModel;
-import com.example.news.R;
-import com.example.news.utils.NewsDetailBottomSheet;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.ParseException;
+import com.bumptech.glide.Glide;
+import com.example.news.NewsModel;
+import com.example.news.R;
+import com.example.news.data.DbHelper;
+import com.example.news.utils.NewsDetailBottomSheet;
+
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
-public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
-
-    ArrayList<NewsModel.Articles> articleList;
+public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
+    ArrayList<NewsModel.Articles> articlesList = new ArrayList<>();
     Context context;
-
     String fragment;
-
     DbHelper db;
     OverlayVisibilityListener listener;
 
-    public NewsAdapter(ArrayList<NewsModel.Articles> articleList, Context context, String fragment, OverlayVisibilityListener listener) {
-        this.articleList = articleList;
+    // Constructor khởi tạo adapter với danh sách tin tức, context, tên fragment và listener
+    public NewsAdapter(ArrayList<NewsModel.Articles> articlesList, Context context, String fragment, OverlayVisibilityListener listener) {
+        this.articlesList = articlesList;
         this.context = context;
         this.fragment = fragment;
         this.listener = listener;
         db = new DbHelper(context);
     }
 
+    // Interface để quản lý hiển thị lớp phủ
     public interface OverlayVisibilityListener {
         void showOverlay();
         void hideOverlay();
@@ -50,42 +46,42 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
     @NonNull
     @Override
-    public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Nạp layout cho mỗi tin tức từ file news_item_layout.xml
         View view = LayoutInflater.from(context).inflate(R.layout.news_item_layout, parent, false);
-        return new NewsViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
-        NewsModel.Articles article = articleList.get(position);
-        holder.title.setText(article.getTitle());
-        holder.newsSource.setText(article.getSource().getName());
-        holder.newsTimeAgo.setText(timeDifference(article.getPublishedAt()));
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        NewsModel.Articles articles = articlesList.get(position);
+        holder.newsTitle.setText(articles.getTitle());
+        holder.newsSource.setText(articles.getSource().getName());
+        holder.newsTimeAgo.setText(timeDifference(articles.getPublishedAt()));
 
-        Glide.with(context)
-                .load(article.getUrlToImage())
-                .placeholder(R.drawable.news_placeholder_img)
-                .into(holder.image);
+        // Tải hình ảnh tin tức bằng Glide
+        Glide.with(holder.itemView.getContext()).load(articles.getUrlToImage()).placeholder(R.drawable.news_placeholder_img).into(holder.newsImg);
 
+        // Xử lý sự kiện nhấn vào tin tức để hiển thị chi tiết
         holder.itemView.setOnClickListener(v -> {
             NewsDetailBottomSheet bottomSheet = new NewsDetailBottomSheet();
-            if (article.getUrlToImage() != null) {
+            if (articles.getUrlToImage() != null) {
                 bottomSheet.setNewsData(
-                        article.getUrlToImage(),
-                        article.getSource().getName(),
-                        article.getTitle(),
-                        timeDifference(article.getPublishedAt()),
-                        article.getUrl(),
-                        article.getContent()
+                        articles.getUrlToImage(),
+                        articles.getSource().getName(),
+                        articles.getTitle(),
+                        timeDifference(articles.getPublishedAt()),
+                        articles.getUrl(),
+                        articles.getContent()
                 );
             } else {
                 bottomSheet.setNewsData(
-                        "https://apdl.lu/wp-content/uploads/2017/09/news-636978_1280.jpg",
-                        article.getSource().getName(),
-                        article.getTitle(),
-                        timeDifference(article.getPublishedAt()),
-                        article.getUrl(),
-                        article.getContent()
+                        "https://cdn.pixabay.com/photo/2015/02/15/09/33/news-636978_1280.jpg",
+                        articles.getSource().getName(),
+                        articles.getTitle(),
+                        timeDifference(articles.getPublishedAt()),
+                        articles.getUrl(),
+                        articles.getContent()
                 );
             }
             bottomSheet.setOverlayVisibilityListener(listener);
@@ -93,73 +89,67 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
             listener.showOverlay();
         });
 
-        holder.itemView.setOnLongClickListener(view -> {
-            if (fragment.equals("Xem sau")) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(context)
-                        .setTitle("Xóa khỏi Xem sau")
-                        .setMessage("Bạn có chắc chắn muốn xóa tin tức này không?")
-                        .setCancelable(false)
-                        .setPositiveButton("Có", (dialogInterface, i) -> {
-                            db.deleteSavedNews(articles.getUrl());
-                            articleList.remove(articleList.get(position));
-                            notifyItemRemoved(holder.getAdapterPosition());
-                            notifyItemRangeChanged(position, articleList.size());
-                        })
-                        .setNegativeButton("Không", (dialogInterface, i) -> {
-                            // Không làm gì
-                        });
-                dialog.show();
+        // Xử lý sự kiện nhấn giữ để xóa tin tức trong danh sách xem sau
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (fragment.equals("Xem sau")) {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(context)
+                            .setTitle("Xóa khỏi Xem sau")
+                            .setMessage("Bạn có chắc chắn muốn xóa tin tức này không?")
+                            .setCancelable(false)
+                            .setPositiveButton("Có", (dialogInterface, i) -> {
+                                db.deleteSavedNews(articles.getUrl());
+                                articlesList.remove(articlesList.get(position));
+                                notifyItemRemoved(holder.getAdapterPosition());
+                                notifyItemRangeChanged(position, articlesList.size());
+                            })
+                            .setNegativeButton("Không", (dialogInterface, i) -> {
+                                // Không làm gì
+                            });
+                    dialog.show();
+                }
+                return true;
             }
-            return true;
-        });
-
-        holder.shareButton.setOnClickListener(v -> {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-            String shareText = article.getTitle() + "\n" + article.getUrl();
-            shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
-            context.startActivity(Intent.createChooser(shareIntent, "Chia sẻ tin tức"));
         });
     }
 
     @Override
     public int getItemCount() {
-        return articleList != null ? articleList.size() : 0;
+        return articlesList.isEmpty() ? 0 : articlesList.size();
     }
 
-    public class NewsViewHolder extends RecyclerView.ViewHolder {
-        TextView title, newsSource, newsTimeAgo;
-        ImageView image, shareButton;
-
-        public NewsViewHolder(@NonNull View itemView) {
-            super(itemView);
-            title = itemView.findViewById(R.id.news_title);
-            newsSource = itemView.findViewById(R.id.newsSource);
-            newsTimeAgo = itemView.findViewById(R.id.newsTimeAgo);
-            image = itemView.findViewById(R.id.news_image);
-            shareButton = itemView.findViewById(R.id.share_button);
-        }
-    }
-
-    // Chuyển đổi thời gian đăng sang định dạng "x phút trước"
+    // Hàm tính thời gian chênh lệch từ thời điểm xuất bản
     public static String timeDifference(String dateTimeString) {
-        try {
-            SimpleDateFormat sdf = null;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+        if (dateTimeString.contains("giờ") || dateTimeString.contains("phút")) return dateTimeString;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            Instant inputTime = Instant.parse(dateTimeString);
+            Instant currentTime = Instant.now();
+            Duration duration = Duration.between(inputTime, currentTime);
 
-                Date date = sdf.parse(dateTimeString);
-                long diff = System.currentTimeMillis() - date.getTime();
+            long minutesPassed = duration.toMinutes();
+            long hoursPassed = duration.toHours();
 
-                long seconds = diff / 1000;
-                if (seconds < 60) return "Vài giây trước";
-                if (seconds < 3600) return (seconds / 60) + " phút trước";
-                if (seconds < 86400) return (seconds / 3600) + " giờ trước";
-                return (seconds / 86400) + " ngày trước";
+            if (minutesPassed < 60) {
+                return minutesPassed + " phút trước";
+            } else {
+                return hoursPassed + " giờ trước";
             }
-        } catch (ParseException e) {
-            return dateTimeString;
         }
         return dateTimeString;
+    }
+
+    // ViewHolder cho mỗi tin tức
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView newsImg;
+        TextView newsTitle, newsSource, newsTimeAgo;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            newsImg = itemView.findViewById(R.id.newsImg);
+            newsTitle = itemView.findViewById(R.id.newsTitle);
+            newsSource = itemView.findViewById(R.id.newsSource);
+            newsTimeAgo = itemView.findViewById(R.id.newsTimeAgo);
+        }
     }
 }

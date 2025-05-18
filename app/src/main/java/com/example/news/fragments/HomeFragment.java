@@ -32,6 +32,8 @@ import com.example.news.utils.NewsDetailBottomSheet;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.text.ParseException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -207,7 +209,7 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
         String title = article.getTitle();
         String name = article.getSource().getName();
         String content = article.getContent();
-        String time = getTimeAgo(article.getPublishedAt());
+        String time = timeDifference(article.getPublishedAt());
         String urlImage = article.getUrlToImage();
         String urlToWeb = article.getUrl();
 
@@ -241,23 +243,22 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
 
     }
 
-    public static String getTimeAgo(String dateTimeString) {
-        try {
-            SimpleDateFormat sdf = null;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+    // Hàm tính thời gian chênh lệch từ thời điểm xuất bản
+    public static String timeDifference(String dateTimeString) {
+        if (dateTimeString.contains("giờ") || dateTimeString.contains("phút")) return dateTimeString;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            Instant inputTime = Instant.parse(dateTimeString);
+            Instant currentTime = Instant.now();
+            Duration duration = Duration.between(inputTime, currentTime);
 
-                Date date = sdf.parse(dateTimeString);
-                long diff = System.currentTimeMillis() - date.getTime();
+            long minutesPassed = duration.toMinutes();
+            long hoursPassed = duration.toHours();
 
-                long seconds = diff / 1000;
-                if (seconds < 60) return "Vài giây trước";
-                if (seconds < 3600) return (seconds / 60) + " phút trước";
-                if (seconds < 86400) return (seconds / 3600) + " giờ trước";
-                return (seconds / 86400) + " ngày trước";
+            if (minutesPassed < 60) {
+                return minutesPassed + " phút trước";
+            } else {
+                return hoursPassed + " giờ trước";
             }
-        } catch (ParseException e) {
-            return dateTimeString;
         }
         return dateTimeString;
     }
