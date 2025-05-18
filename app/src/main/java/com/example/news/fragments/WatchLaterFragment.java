@@ -3,6 +3,7 @@ package com.example.news.fragments;
 import android.graphics.Color;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -15,8 +16,12 @@ import android.widget.Spinner;
 import com.example.news.MainActivity;
 import com.example.news.R;
 import com.example.news.NewsModel;
+import com.example.news.adapters.NewsAdapter;
+import com.example.news.data.DbHelper;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class WatchLaterFragment extends Fragment {
 
@@ -26,6 +31,10 @@ public class WatchLaterFragment extends Fragment {
     private LinearLayout noWatchLaterNews;
     private Spinner sortBySpinner;
     private String orderOfNews = "Cũ nhất trước";
+    private DbHelper db;
+    private NewsAdapter newsAdapter;
+    private List<NewsModel.Articles> newsArrayList = new ArrayList<>();
+
 
 
     public WatchLaterFragment() {
@@ -47,6 +56,13 @@ public class WatchLaterFragment extends Fragment {
         sortBySpinner = view.findViewById(R.id.sortBySpinner);
         watchLaterRV = view.findViewById(R.id.watchLater);
 
+        db = new DbHelper(getContext());
+
+        // thiết lập RecycleView với newsAdapter
+        newsAdapter = new NewsAdapter(getContext(),newsArrayList);
+        watchLaterRV.setLayoutManager(new LinearLayoutManager(getContext()));
+        watchLaterRV.setAdapter(newsAdapter);
+
         sortBySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -62,9 +78,34 @@ public class WatchLaterFragment extends Fragment {
             }
         });
 
+        getSavedNews();
+
         return view;
     }
 
+    private void getSavedNews() {
+        // Lấy danh sách tin tức đã lưu
+        List<NewsModel.Articles> savedNews = db.getSavedNews();
+
+        // Kiểm tra và hiển thị layout thông báo nếu không có tin tức
+        if (savedNews.isEmpty()) {
+            noWatchLaterNews.setVisibility(View.VISIBLE);
+            watchLaterRV.setVisibility(View.GONE);
+        } else {
+            noWatchLaterNews.setVisibility(View.GONE);
+            watchLaterRV.setVisibility(View.VISIBLE);
+        }
+
+        // Cập nhật danh sách tin tức
+        newsArrayList.clear();
+        newsArrayList.addAll(savedNews);
+
+        // Áp dụng sắp xếp dựa trên tiêu chí hiện tại
+        applySorting(orderOfNews);
+
+        // Cập nhật giao diện
+        newsAdapter.notifyDataSetChanged();
+    }
 
 
     private void applySorting(String option) {

@@ -32,7 +32,7 @@ public class NewsDetailBottomSheet extends BottomSheetDialogFragment {
     TextView newsSourceTextView;
     TextView newsTimeAgoTextView;
     TextView newsContentTextView;
-    ImageView goBackFromDetails, imgOfNew1, shareNews;
+    ImageView goBackFromDetails, imgOfNew1;
     Button watchLater,learnMore;
     CardView shareNewsCV;
     DbHelper db;
@@ -43,7 +43,7 @@ public class NewsDetailBottomSheet extends BottomSheetDialogFragment {
         this.newsTitle = title;
         this.newsTimeAgo = timeAgo;
         this.newsContent = content;
-        this.urlToWeb = imgURL;
+        this.urlToWeb = urlToWeb;
     }
 
 
@@ -75,7 +75,7 @@ public class NewsDetailBottomSheet extends BottomSheetDialogFragment {
         newsTitleTextView.setText(newsTitle);
         newsTimeAgoTextView.setText(newsTimeAgo);
         newsContentTextView.setText(newsContent);
-        Glide.with(getContext()).load(imgUrl).into(imgOfNew1);
+        Glide.with(this).load(imgUrl).into(imgOfNew1);
 
         db = new DbHelper(getContext());
 
