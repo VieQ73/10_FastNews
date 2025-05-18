@@ -8,13 +8,4 @@
     </style>
 
     <style name="Theme.News" parent="Base.Theme.News" />
-
-    <style name="Theme.News.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="Theme.News.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.News.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

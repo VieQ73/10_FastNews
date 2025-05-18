@@ -2,18 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="8dp">
+    android:layout_marginEnd="30sp"
+    android:gravity="center">
 
     <TextView
-        android:id="@+id/nav_title"
+        android:id="@+id/navItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Category"
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
-        android:singleLine="true"
-        android:ellipsize="end"/>
+        android:text=""
+        android:textColor="#706F6F"
+        android:textSize="17sp"
+        android:textStyle="bold"/>
 
-    </LinearLayout>
+    <View
+        android:id="@+id/navUnderline"
+        android:layout_width="50sp"
+        android:layout_height="4sp"
+        android:layout_marginTop="5sp"
+        android:background="@color/themeColor2"
+        android:visibility="invisible"/>
+</LinearLayout>
