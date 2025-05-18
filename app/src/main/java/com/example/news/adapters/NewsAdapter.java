@@ -1,5 +1,6 @@
 package com.example.news.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
@@ -72,7 +73,49 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
                 .into(holder.image);
 
         holder.itemView.setOnClickListener(v -> {
-            // TODO: Hiển thị chi tiết bài báo
+            NewsDetailBottomSheet bottomSheet = new NewsDetailBottomSheet();
+            if (articles.getUrlToImage() != null) {
+                bottomSheet.setNewsData(
+                        articles.getUrlToImage(),
+                        articles.getSource().getName(),
+                        articles.getTitle(),
+                        timeDifference(articles.getPublishedAt()),
+                        articles.getUrl(),
+                        articles.getContent()
+                );
+            } else {
+                bottomSheet.setNewsData(
+                        "https://apdl.lu/wp-content/uploads/2017/09/news-636978_1280.jpg",
+                        articles.getSource().getName(),
+                        articles.getTitle(),
+                        timeDifference(articles.getPublishedAt()),
+                        articles.getUrl(),
+                        articles.getContent()
+                );
+            }
+            bottomSheet.setOverlayVisibilityListener(listener);
+            bottomSheet.show(((AppCompatActivity) context).getSupportFragmentManager(), "newsDetailBottomSheet");
+            listener.showOverlay();
+        });
+
+        holder.itemView.setOnLongClickListener(view -> {
+            if (fragment.equals("Xem sau")) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(context)
+                        .setTitle("Xóa khỏi Xem sau")
+                        .setMessage("Bạn có chắc chắn muốn xóa tin tức này không?")
+                        .setCancelable(false)
+                        .setPositiveButton("Có", (dialogInterface, i) -> {
+                            db.deleteSavedNews(articles.getUrl());
+                            arrayList.remove(arrayList.get(position));
+                            notifyItemRemoved(holder.getAdapterPosition());
+                            notifyItemRangeChanged(position, arrayList.size());
+                        })
+                        .setNegativeButton("Không", (dialogInterface, i) -> {
+                            // Không làm gì
+                        });
+                dialog.show();
+            }
+            return true;
         });
 
         holder.shareButton.setOnClickListener(v -> {
@@ -89,7 +132,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         return articleList != null ? articleList.size() : 0;
     }
 
-    public static class NewsViewHolder extends RecyclerView.ViewHolder {
+    public class NewsViewHolder extends RecyclerView.ViewHolder {
         TextView title, newsSource, newsTimeAgo;
         ImageView image, shareButton;
 
