@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,9 +24,6 @@ import com.example.news.adapters.NewsAdapter;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -37,55 +33,29 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 // HomeFragment hiển thị danh sách danh mục và tin tức
-public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryClickListener {
+public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryClickListener, NewsAdapter.OverlayVisibilityListener {
 
-    RecyclerView navRV, newsRV;
-    NavbarAdapter navAdapter;
-    NewsAdapter newsAdapter;
-    ArrayList<String> navArrayList = new ArrayList<>();
-    ArrayList<NewsModel.Articles> newsArrayList = new ArrayList<>();
-
-    ImageView imgOfNews1;
-    CardView imgNews1;
-    TextView titleOfNews1, nameOfNews1, timeAgoOfNews1, newsStatus;
-
-    String defaultLanguage, defaultCountry;
-    int defaultMaxNews;
-
-    ShimmerFrameLayout shimmerFrameLayout, shimmerNews1;
     private RecyclerView navbarRecyclerView, newsRecyclerView;
     private NavbarAdapter navbarAdapter;
-
+    private NewsAdapter newsAdapter;
     private ArrayList<String> navItems = new ArrayList<>();
     private ArrayList<NewsModel.Articles> newsItems = new ArrayList<>();
 
+    private CardView imgNews1;
+    private ImageView imgOfNews1;
+    private TextView titleOfNews1, nameOfNews1;
+    private ShimmerFrameLayout shimmerFrameLayout;
+
+    @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        // Khởi tạo giao diện bài viết nổi bật
         imgNews1 = view.findViewById(R.id.imgNews1);
         imgOfNews1 = view.findViewById(R.id.imgOfNews1);
         titleOfNews1 = view.findViewById(R.id.titleOfNews1);
         nameOfNews1 = view.findViewById(R.id.nameOfNews1);
-        timeAgoOfNews1 = view.findViewById(R.id.timeAgoOfNews1);
-        newsStatus = view.findViewById(R.id.newsStatus);
-        shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);
-        shimmerNews1 = view.findViewById(R.id.shimmerNews1);
-        navRV = view.findViewById(R.id.navRV);
-        newsRV = view.findViewById(R.id.newsRecyclerView);
-
-        navArrayList.addAll(Arrays.asList("Tổng quát", "Giải trí", "Kinh doanh", "Thể thao", "Sức khỏe", "Công nghệ"));
-        navAdapter = new NavbarAdapter(navArrayList, getContext());
-        navRV.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        navRV.setAdapter(navAdapter);
-        navAdapter.setOnCategoryClickListener(this);
-
-        newsAdapter = new NewsAdapter(newsArrayList, getContext(), "Trang chủ");
-        newsRV.setLayoutManager(new LinearLayoutManager(getContext()));
-        newsRV.setAdapter(newsAdapter);
-
-        shimmerFrameLayout.startShimmer();
-        shimmerNews1.startShimmer();
 
         // Khởi tạo ShimmerFrameLayout
         shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);
@@ -118,8 +88,7 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
         return view;
     }
 
-
-    // Phương thức này được gọi khi một danh mục được click trong NavbarAdapter.
+    // Xử lý khi nhấn danh mục
     @Override
     public void onCategoryClick(String category) {
         shimmerFrameLayout.setVisibility(View.VISIBLE);
@@ -183,5 +152,15 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
                 Toast.makeText(getContext(), "Failed to load news", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void showOverlay() {
+
+    }
+
+    @Override
+    public void hideOverlay() {
+
     }
 }

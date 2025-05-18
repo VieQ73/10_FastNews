@@ -30,10 +30,26 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
     String fragment;
 
+    DbHelper db;
+    OverlayVisibilityListener listener;
+
     public NewsAdapter(ArrayList<NewsModel.Articles> articleList, Context context, String fragment) {
         this.articleList = articleList;
         this.context = context;
         this.fragment = fragment;
+    }
+
+    public NewsAdapter(ArrayList<NewsModel.Articles> articleList, Context context, String fragment, DbHelper db, OverlayVisibilityListener listener) {
+        this.articleList = articleList;
+        this.context = context;
+        this.fragment = fragment;
+        this.db = db;
+        this.listener = listener;
+    }
+
+    public interface OverlayVisibilityListener {
+        void showOverlay();
+        void hideOverlay();
     }
 
     @NonNull

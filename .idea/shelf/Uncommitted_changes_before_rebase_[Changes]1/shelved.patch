@@ -1,0 +1,368 @@
+Index: app/src/main/java/com/example/news/fragments/HomeFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.news.fragments;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageView;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.cardview.widget.CardView;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.bumptech.glide.Glide;\r\nimport com.example.news.NewsApi;\r\nimport com.example.news.NewsModel;\r\nimport com.example.news.R;\r\nimport com.example.news.adapters.NavbarAdapter;\r\nimport com.example.news.adapters.NewsAdapter;\r\nimport com.facebook.shimmer.ShimmerFrameLayout;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.Arrays;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\nimport retrofit2.Call;\r\nimport retrofit2.Callback;\r\nimport retrofit2.Response;\r\nimport retrofit2.Retrofit;\r\nimport retrofit2.converter.gson.GsonConverterFactory;\r\n\r\n// HomeFragment hiển thị danh sách danh mục và tin tức\r\npublic class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryClickListener {\r\n\r\n    RecyclerView navRV, newsRV;\r\n    NavbarAdapter navAdapter;\r\n    NewsAdapter newsAdapter;\r\n    ArrayList<String> navArrayList = new ArrayList<>();\r\n    ArrayList<NewsModel.Articles> newsArrayList = new ArrayList<>();\r\n\r\n    ImageView imgOfNews1;\r\n    CardView imgNews1;\r\n    TextView titleOfNews1, nameOfNews1, timeAgoOfNews1, newsStatus;\r\n\r\n    String defaultLanguage, defaultCountry;\r\n    int defaultMaxNews;\r\n\r\n    ShimmerFrameLayout shimmerFrameLayout, shimmerNews1;\r\n    private RecyclerView navbarRecyclerView, newsRecyclerView;\r\n    private NavbarAdapter navbarAdapter;\r\n\r\n    private ArrayList<String> navItems = new ArrayList<>();\r\n    private ArrayList<NewsModel.Articles> newsItems = new ArrayList<>();\r\n\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        View view = inflater.inflate(R.layout.fragment_home, container, false);\r\n\r\n        imgNews1 = view.findViewById(R.id.imgNews1);\r\n        imgOfNews1 = view.findViewById(R.id.imgOfNews1);\r\n        titleOfNews1 = view.findViewById(R.id.titleOfNews1);\r\n        nameOfNews1 = view.findViewById(R.id.nameOfNews1);\r\n        timeAgoOfNews1 = view.findViewById(R.id.timeAgoOfNews1);\r\n        newsStatus = view.findViewById(R.id.newsStatus);\r\n        shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);\r\n        shimmerNews1 = view.findViewById(R.id.shimmerNews1);\r\n        navRV = view.findViewById(R.id.navRV);\r\n        newsRV = view.findViewById(R.id.newsRecyclerView);\r\n\r\n        navArrayList.addAll(Arrays.asList(\"Tổng quát\", \"Giải trí\", \"Kinh doanh\", \"Thể thao\", \"Sức khỏe\", \"Công nghệ\"));\r\n        navAdapter = new NavbarAdapter(navArrayList, getContext());\r\n        navRV.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));\r\n        navRV.setAdapter(navAdapter);\r\n        navAdapter.setOnCategoryClickListener(this);\r\n\r\n        newsAdapter = new NewsAdapter(newsArrayList, getContext(), \"Trang chủ\");\r\n        newsRV.setLayoutManager(new LinearLayoutManager(getContext()));\r\n        newsRV.setAdapter(newsAdapter);\r\n\r\n        shimmerFrameLayout.startShimmer();\r\n        shimmerNews1.startShimmer();\r\n\r\n        // Khởi tạo ShimmerFrameLayout\r\n        shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);\r\n        shimmerFrameLayout.startShimmer();\r\n\r\n        // Khởi tạo RecyclerView cho danh mục\r\n        navbarRecyclerView = view.findViewById(R.id.navbarRecyclerView);\r\n        navbarRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));\r\n\r\n        // Thêm danh mục tin tức\r\n        navItems.add(\"Sports\");\r\n        navItems.add(\"Entertainment\");\r\n        navItems.add(\"Technology\");\r\n        navItems.add(\"Business\");\r\n        navItems.add(\"Health\");\r\n\r\n        navbarAdapter = new NavbarAdapter(navItems, getContext());\r\n        navbarAdapter.setOnCategoryClickListener(this);\r\n        navbarRecyclerView.setAdapter(navbarAdapter);\r\n\r\n        // Khởi tạo RecyclerView cho tin tức\r\n        newsRecyclerView = view.findViewById(R.id.newsRecyclerView);\r\n        newsAdapter = new NewsAdapter(newsItems, getContext(), \"Home\");\r\n        newsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));\r\n        newsRecyclerView.setAdapter(newsAdapter);\r\n\r\n        // Tải tin tức mặc định\r\n        getNews(\"Sports\");\r\n\r\n        return view;\r\n    }\r\n\r\n\r\n    // Phương thức này được gọi khi một danh mục được click trong NavbarAdapter.\r\n    @Override\r\n    public void onCategoryClick(String category) {\r\n        shimmerFrameLayout.setVisibility(View.VISIBLE);\r\n        shimmerFrameLayout.startShimmer();\r\n        newsRecyclerView.setVisibility(View.GONE);\r\n        imgNews1.setVisibility(View.GONE);\r\n        getNews(category);\r\n    }\r\n\r\n    // Tải tin tức từ GNews API\r\n    private void getNews(String category) {\r\n        String API_KEY = \"ca9fed4acd8ed6f43b8b793edfde087b\";\r\n        String BASE_URL = \"https://gnews.io/api/v4/\";\r\n\r\n        Retrofit retrofit = new Retrofit.Builder()\r\n                .baseUrl(BASE_URL)\r\n                .addConverterFactory(GsonConverterFactory.create())\r\n                .build();\r\n\r\n        NewsApi newsApi = retrofit.create(NewsApi.class);\r\n        Call<NewsModel> call = newsApi.getNewsByCategory(API_KEY, category.toLowerCase(), \"en\", \"us\", 10);\r\n\r\n        call.enqueue(new Callback<NewsModel>() {\r\n            @Override\r\n            public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {\r\n                shimmerFrameLayout.stopShimmer();\r\n                shimmerFrameLayout.setVisibility(View.GONE);\r\n                newsRecyclerView.setVisibility(View.VISIBLE);\r\n                imgNews1.setVisibility(View.VISIBLE);\r\n\r\n                if (response.isSuccessful() && response.body() != null) {\r\n                    List<NewsModel.Articles> articles = response.body().getArticles();\r\n                    if (articles != null && !articles.isEmpty()) {\r\n                        // Hiển thị bài viết nổi bật\r\n                        NewsModel.Articles firstArticle = articles.get(0);\r\n                        titleOfNews1.setText(firstArticle.getTitle());\r\n                        nameOfNews1.setText(firstArticle.getSource().getName());\r\n                        Glide.with(getContext()).load(firstArticle.getUrlToImage())\r\n                                .placeholder(R.drawable.news_placeholder_img)\r\n                                .into(imgOfNews1);\r\n\r\n                        // Thêm sự kiện nhấn cho bài viết nổi bật\r\n                        imgOfNews1.setOnClickListener(v -> {\r\n                            Toast.makeText(getContext(), \"Clicked: \" + firstArticle.getTitle(), Toast.LENGTH_SHORT).show();\r\n                        });\r\n\r\n                        // Cập nhật danh sách tin tức\r\n                        newsItems.clear();\r\n                        newsItems.addAll(articles.subList(1, articles.size()));\r\n                        newsAdapter.notifyDataSetChanged();\r\n                    } else {\r\n                        Toast.makeText(getContext(), \"No news available\", Toast.LENGTH_SHORT).show();\r\n                    }\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onFailure(Call<NewsModel> call, Throwable t) {\r\n                shimmerFrameLayout.stopShimmer();\r\n                shimmerFrameLayout.setVisibility(View.GONE);\r\n                Toast.makeText(getContext(), \"Failed to load news\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/news/fragments/HomeFragment.java b/app/src/main/java/com/example/news/fragments/HomeFragment.java
+--- a/app/src/main/java/com/example/news/fragments/HomeFragment.java	(revision 3bf8025d06215191377d6652702f0b479034d971)
++++ b/app/src/main/java/com/example/news/fragments/HomeFragment.java	(date 1747555389794)
+@@ -5,7 +5,6 @@
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.ImageView;
+-import android.widget.LinearLayout;
+ import android.widget.TextView;
+ import android.widget.Toast;
+ 
+@@ -24,9 +23,6 @@
+ import com.example.news.adapters.NewsAdapter;
+ import com.facebook.shimmer.ShimmerFrameLayout;
+ 
+-import java.util.ArrayList;
+-import java.util.Arrays;
+-
+ import java.util.ArrayList;
+ import java.util.List;
+ 
+@@ -37,55 +33,29 @@
+ import retrofit2.converter.gson.GsonConverterFactory;
+ 
+ // HomeFragment hiển thị danh sách danh mục và tin tức
+-public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryClickListener {
+-
+-    RecyclerView navRV, newsRV;
+-    NavbarAdapter navAdapter;
+-    NewsAdapter newsAdapter;
+-    ArrayList<String> navArrayList = new ArrayList<>();
+-    ArrayList<NewsModel.Articles> newsArrayList = new ArrayList<>();
++public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryClickListener, NewsAdapter.OverlayVisibilityListener {
+ 
+-    ImageView imgOfNews1;
+-    CardView imgNews1;
+-    TextView titleOfNews1, nameOfNews1, timeAgoOfNews1, newsStatus;
+-
+-    String defaultLanguage, defaultCountry;
+-    int defaultMaxNews;
+-
+-    ShimmerFrameLayout shimmerFrameLayout, shimmerNews1;
+     private RecyclerView navbarRecyclerView, newsRecyclerView;
+     private NavbarAdapter navbarAdapter;
+-
++    private NewsAdapter newsAdapter;
+     private ArrayList<String> navItems = new ArrayList<>();
+     private ArrayList<NewsModel.Articles> newsItems = new ArrayList<>();
+ 
++    private CardView imgNews1;
++    private ImageView imgOfNews1;
++    private TextView titleOfNews1, nameOfNews1;
++    private ShimmerFrameLayout shimmerFrameLayout;
++
++    @Nullable
+     @Override
+     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+         View view = inflater.inflate(R.layout.fragment_home, container, false);
+ 
++        // Khởi tạo giao diện bài viết nổi bật
+         imgNews1 = view.findViewById(R.id.imgNews1);
+         imgOfNews1 = view.findViewById(R.id.imgOfNews1);
+         titleOfNews1 = view.findViewById(R.id.titleOfNews1);
+         nameOfNews1 = view.findViewById(R.id.nameOfNews1);
+-        timeAgoOfNews1 = view.findViewById(R.id.timeAgoOfNews1);
+-        newsStatus = view.findViewById(R.id.newsStatus);
+-        shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);
+-        shimmerNews1 = view.findViewById(R.id.shimmerNews1);
+-        navRV = view.findViewById(R.id.navRV);
+-        newsRV = view.findViewById(R.id.newsRecyclerView);
+-
+-        navArrayList.addAll(Arrays.asList("Tổng quát", "Giải trí", "Kinh doanh", "Thể thao", "Sức khỏe", "Công nghệ"));
+-        navAdapter = new NavbarAdapter(navArrayList, getContext());
+-        navRV.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+-        navRV.setAdapter(navAdapter);
+-        navAdapter.setOnCategoryClickListener(this);
+-
+-        newsAdapter = new NewsAdapter(newsArrayList, getContext(), "Trang chủ");
+-        newsRV.setLayoutManager(new LinearLayoutManager(getContext()));
+-        newsRV.setAdapter(newsAdapter);
+-
+-        shimmerFrameLayout.startShimmer();
+-        shimmerNews1.startShimmer();
+ 
+         // Khởi tạo ShimmerFrameLayout
+         shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);
+@@ -118,8 +88,7 @@
+         return view;
+     }
+ 
+-
+-    // Phương thức này được gọi khi một danh mục được click trong NavbarAdapter.
++    // Xử lý khi nhấn danh mục
+     @Override
+     public void onCategoryClick(String category) {
+         shimmerFrameLayout.setVisibility(View.VISIBLE);
+@@ -184,4 +153,14 @@
+             }
+         });
+     }
++
++    @Override
++    public void showOverlay() {
++
++    }
++
++    @Override
++    public void hideOverlay() {
++
++    }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/news/adapters/NewsAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.news.adapters;\r\n\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.icu.text.SimpleDateFormat;\r\nimport android.os.Build;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageView;\r\nimport android.widget.TextView;\r\n\r\nimport com.bumptech.glide.Glide;\r\nimport com.example.news.NewsModel;\r\nimport com.example.news.R;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport java.text.ParseException;\r\nimport java.util.ArrayList;\r\nimport java.util.Date;\r\nimport java.util.Locale;\r\n\r\npublic class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {\r\n\r\n    ArrayList<NewsModel.Articles> articleList;\r\n    Context context;\r\n\r\n    String fragment;\r\n\r\n    public NewsAdapter(ArrayList<NewsModel.Articles> articleList, Context context, String fragment) {\r\n        this.articleList = articleList;\r\n        this.context = context;\r\n        this.fragment = fragment;\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {\r\n        View view = LayoutInflater.from(context).inflate(R.layout.news_item_layout, parent, false);\r\n        return new NewsViewHolder(view);\r\n    }\r\n\r\n    @Override\r\n    public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {\r\n        NewsModel.Articles article = articleList.get(position);\r\n        holder.title.setText(article.getTitle());\r\n        holder.newsSource.setText(article.getSource().getName());\r\n        holder.newsTimeAgo.setText(getTimeAgo(article.getPublishedAt()));\r\n\r\n        Glide.with(context)\r\n                .load(article.getUrlToImage())\r\n                .placeholder(R.drawable.news_placeholder_img)\r\n                .into(holder.image);\r\n\r\n        holder.itemView.setOnClickListener(v -> {\r\n            // TODO: Hiển thị chi tiết bài báo\r\n        });\r\n\r\n        holder.shareButton.setOnClickListener(v -> {\r\n            Intent shareIntent = new Intent(Intent.ACTION_SEND);\r\n            shareIntent.setType(\"text/plain\");\r\n            String shareText = article.getTitle() + \"\\n\" + article.getUrl();\r\n            shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);\r\n            context.startActivity(Intent.createChooser(shareIntent, \"Chia sẻ tin tức\"));\r\n        });\r\n    }\r\n\r\n    @Override\r\n    public int getItemCount() {\r\n        return articleList != null ? articleList.size() : 0;\r\n    }\r\n\r\n    public static class NewsViewHolder extends RecyclerView.ViewHolder {\r\n        TextView title, newsSource, newsTimeAgo;\r\n        ImageView image, shareButton;\r\n\r\n        public NewsViewHolder(@NonNull View itemView) {\r\n            super(itemView);\r\n            title = itemView.findViewById(R.id.news_title);\r\n            newsSource = itemView.findViewById(R.id.newsSource);\r\n            newsTimeAgo = itemView.findViewById(R.id.newsTimeAgo);\r\n            image = itemView.findViewById(R.id.news_image);\r\n            shareButton = itemView.findViewById(R.id.share_button);\r\n        }\r\n    }\r\n\r\n    // Chuyển đổi thời gian đăng sang định dạng \"x phút trước\"\r\n    public static String getTimeAgo(String dateTimeString) {\r\n        try {\r\n            SimpleDateFormat sdf = null;\r\n            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {\r\n                sdf = new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ss'Z'\", Locale.getDefault());\r\n\r\n                Date date = sdf.parse(dateTimeString);\r\n                long diff = System.currentTimeMillis() - date.getTime();\r\n\r\n                long seconds = diff / 1000;\r\n                if (seconds < 60) return \"Vài giây trước\";\r\n                if (seconds < 3600) return (seconds / 60) + \" phút trước\";\r\n                if (seconds < 86400) return (seconds / 3600) + \" giờ trước\";\r\n                return (seconds / 86400) + \" ngày trước\";\r\n            }\r\n        } catch (ParseException e) {\r\n            return dateTimeString;\r\n        }\r\n\r\n        return dateTimeString;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/news/adapters/NewsAdapter.java b/app/src/main/java/com/example/news/adapters/NewsAdapter.java
+--- a/app/src/main/java/com/example/news/adapters/NewsAdapter.java	(revision 3bf8025d06215191377d6652702f0b479034d971)
++++ b/app/src/main/java/com/example/news/adapters/NewsAdapter.java	(date 1747555370481)
+@@ -36,6 +36,11 @@
+         this.fragment = fragment;
+     }
+ 
++    public interface OverlayVisibilityListener {
++        void showOverlay();
++        void hideOverlay();
++    }
++
+     @NonNull
+     @Override
+     public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+Index: app/src/main/res/layout/fragment_home.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.core.widget.NestedScrollView\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    android:id=\"@+id/nestedScrollView\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:fillViewport=\"true\">\r\n\r\n    <androidx.constraintlayout.widget.ConstraintLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:padding=\"16dp\">\r\n\r\n        <!-- Nav RecyclerView -->\r\n        <androidx.recyclerview.widget.RecyclerView\r\n            android:id=\"@+id/navRV\"\r\n            android:layout_width=\"0dp\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginBottom=\"18dp\"\r\n            app:layout_constraintTop_toTopOf=\"parent\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\" />\r\n\r\n        <!-- Image CardView -->\r\n        <androidx.cardview.widget.CardView\r\n            android:id=\"@+id/imgNews1\"\r\n            android:layout_width=\"0dp\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginTop=\"5dp\"\r\n            android:layout_marginBottom=\"8dp\"\r\n            android:visibility=\"gone\"\r\n            app:cardCornerRadius=\"12dp\"\r\n            app:cardElevation=\"4dp\"\r\n            app:layout_constraintTop_toBottomOf=\"@id/navRV\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\">\r\n\r\n            <FrameLayout\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\">\r\n\r\n                <ImageView\r\n                    android:id=\"@+id/imgOfNews1\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"match_parent\" />\r\n\r\n                <View\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"match_parent\"\r\n                    android:background=\"#90000000\" />\r\n\r\n                <androidx.constraintlayout.widget.ConstraintLayout\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"match_parent\"\r\n                    android:padding=\"20dp\">\r\n\r\n                    <TextView\r\n                        android:id=\"@+id/titleOfNews1\"\r\n                        android:layout_width=\"0dp\"\r\n                        android:layout_height=\"wrap_content\"\r\n                        app:layout_constraintStart_toStartOf=\"parent\"\r\n                        app:layout_constraintEnd_toEndOf=\"parent\"\r\n                        app:layout_constraintBottom_toTopOf=\"@id/detailsRelativeLayout\"\r\n                        app:layout_constraintBottom_margin=\"10dp\" />\r\n\r\n                    <androidx.constraintlayout.widget.ConstraintLayout\r\n                        android:id=\"@+id/detailsRelativeLayout\"\r\n                        android:layout_width=\"0dp\"\r\n                        android:layout_height=\"wrap_content\"\r\n                        app:layout_constraintStart_toStartOf=\"parent\"\r\n                        app:layout_constraintEnd_toEndOf=\"parent\"\r\n                        app:layout_constraintBottom_toBottomOf=\"parent\">\r\n\r\n                        <TextView\r\n                            android:id=\"@+id/nameOfNews1\"\r\n                            android:layout_width=\"wrap_content\"\r\n                            android:layout_height=\"wrap_content\"\r\n                            app:layout_constraintStart_toStartOf=\"parent\" />\r\n\r\n                        <TextView\r\n                            android:id=\"@+id/timeAgoOfNews1\"\r\n                            android:layout_width=\"wrap_content\"\r\n                            android:layout_height=\"wrap_content\"\r\n                            android:visibility=\"invisible\"\r\n                            app:layout_constraintEnd_toEndOf=\"parent\" />\r\n                    </androidx.constraintlayout.widget.ConstraintLayout>\r\n                </androidx.constraintlayout.widget.ConstraintLayout>\r\n            </FrameLayout>\r\n        </androidx.cardview.widget.CardView>\r\n\r\n        <!-- Shimmer Image -->\r\n        <com.facebook.shimmer.ShimmerFrameLayout\r\n            android:id=\"@+id/shimmerNews1\"\r\n            android:layout_width=\"0dp\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginTop=\"8dp\"\r\n            app:layout_constraintTop_toBottomOf=\"@id/imgNews1\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:shimmer_auto_start=\"true\"\r\n            app:shimmer_duration=\"1500\">\r\n\r\n            <include layout=\"@layout/shimmer_card_news_item\" />\r\n        </com.facebook.shimmer.ShimmerFrameLayout>\r\n\r\n        <!-- Featured Title -->\r\n        <TextView\r\n            android:id=\"@+id/newsStatus\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:text=\"Tin tức nổi bật\"\r\n            android:textSize=\"30sp\"\r\n            android:textStyle=\"bold\"\r\n            app:layout_constraintTop_toBottomOf=\"@id/shimmerNews1\"\r\n            app:layout_constraintStart_toStartOf=\"parent\" />\r\n\r\n        <!-- Shimmer List -->\r\n        <com.facebook.shimmer.ShimmerFrameLayout\r\n            android:id=\"@+id/shimmerFrameLayout\"\r\n            android:layout_width=\"0dp\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:visibility=\"visible\"\r\n            app:layout_constraintTop_toBottomOf=\"@id/newsStatus\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:shimmer_auto_start=\"true\"\r\n            app:shimmer_duration=\"1500\">\r\n        <!-- RecyclerView cho danh mục -->\r\n        <androidx.recyclerview.widget.RecyclerView\r\n            android:id=\"@+id/navbarRecyclerView\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginBottom=\"16dp\"\r\n            android:orientation=\"horizontal\"\r\n            app:layoutManager=\"androidx.recyclerview.widget.LinearLayoutManager\"/>\r\n\r\n        <!-- Shimmer cho toàn bộ nội dung -->\r\n        <com.facebook.shimmer.ShimmerFrameLayout\r\n            android:id=\"@+id/shimmerFrameLayout\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginBottom=\"8dp\"\r\n            android:visibility=\"visible\">\r\n\r\n            <LinearLayout\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:orientation=\"vertical\"\r\n                android:padding=\"8dp\"\r\n                android:clipToPadding=\"false\">\r\n\r\n                <include layout=\"@layout/shimmer_news_item\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                     />\r\n\r\n                <include layout=\"@layout/shimmer_news_item\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                     />\r\n\r\n                <include layout=\"@layout/shimmer_news_item\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                     />\r\n            </LinearLayout>\r\n        </com.facebook.shimmer.ShimmerFrameLayout>\r\n\r\n        <!-- News RecyclerView -->\r\n                android:orientation=\"vertical\">\r\n                <!-- Shimmer cho bài viết nổi bật -->\r\n                <View\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"200dp\"\r\n                    android:background=\"@android:color/darker_gray\"\r\n                    android:layout_marginBottom=\"8dp\"/>\r\n                <!-- Shimmer cho danh sách tin tức -->\r\n                <View\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"150dp\"\r\n                    android:background=\"@android:color/darker_gray\"\r\n                    android:layout_marginVertical=\"6dp\"/>\r\n                <View\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"150dp\"\r\n                    android:background=\"@android:color/darker_gray\"\r\n                    android:layout_marginVertical=\"6dp\"/>\r\n            </LinearLayout>\r\n        </com.facebook.shimmer.ShimmerFrameLayout>\r\n\r\n        <!-- Tin tức nổi bật -->\r\n        <androidx.cardview.widget.CardView\r\n            android:id=\"@+id/imgNews1\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_margin=\"8dp\"\r\n            android:visibility=\"gone\"\r\n            app:cardCornerRadius=\"12dp\"\r\n            app:cardElevation=\"4dp\">\r\n\r\n            <LinearLayout\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:orientation=\"vertical\">\r\n\r\n                <ImageView\r\n                    android:id=\"@+id/imgOfNews1\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"200dp\"\r\n                    android:scaleType=\"centerCrop\"\r\n                    android:contentDescription=\"Hình ảnh tin tức nổi bật\"/>\r\n\r\n                <TextView\r\n                    android:id=\"@+id/titleOfNews1\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:padding=\"8dp\"\r\n                    android:text=\"Tiêu đề tin tức\"\r\n                    android:textSize=\"18sp\"\r\n                    android:textStyle=\"bold\"/>\r\n\r\n                <TextView\r\n                    android:id=\"@+id/nameOfNews1\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:paddingHorizontal=\"8dp\"\r\n                    android:paddingBottom=\"8dp\"\r\n                    android:text=\"Nguồn tin\"\r\n                    android:textSize=\"14sp\"\r\n                    android:textColor=\"@android:color/darker_gray\"/>\r\n            </LinearLayout>\r\n        </androidx.cardview.widget.CardView>\r\n\r\n        <!-- Danh sách tin tức -->\r\n        <androidx.recyclerview.widget.RecyclerView\r\n            android:id=\"@+id/newsRecyclerView\"\r\n            android:layout_width=\"0dp\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginTop=\"8dp\"\r\n            android:visibility=\"gone\"\r\n            android:nestedScrollingEnabled=\"false\"\r\n            app:layout_constraintTop_toBottomOf=\"@id/shimmerFrameLayout\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\" />\r\n    </androidx.constraintlayout.widget.ConstraintLayout>\r\n    <LinearLayout\r\n        android:id=\"@+id/noNewsLL\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:orientation=\"vertical\"\r\n        android:gravity=\"center\"\r\n        android:visibility=\"gone\">\r\n\r\n        <ImageView\r\n            android:layout_width=\"250sp\"\r\n            android:layout_height=\"250sp\"\r\n            android:src=\"@drawable/no_news_found\"\r\n            android:scaleType=\"centerCrop\"\r\n            android:visibility=\"visible\"/>\r\n\r\n        <TextView\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:text=\"Không tìm thấy tin tức\"\r\n            android:textColor=\"#04010B\"\r\n            android:textSize=\"30sp\"\r\n            android:layout_marginTop=\"10sp\"/>\r\n\r\n        <TextView\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:gravity=\"center\"\r\n            android:maxWidth=\"350sp\"\r\n            android:text=\"Hãy thử các bộ lọc khác\"\r\n            android:textColor=\"#04010B\"\r\n            android:layout_marginTop=\"5sp\"/>\r\n    </LinearLayout>\r\n\r\n    <View\r\n        android:id=\"@+id/dimOverlay\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:background=\"#00000000\"\r\n        android:visibility=\"gone\" />\r\n</androidx.core.widget.NestedScrollView>\r\n    </LinearLayout>\r\n</androidx.core.widget.NestedScrollView>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_home.xml b/app/src/main/res/layout/fragment_home.xml
+--- a/app/src/main/res/layout/fragment_home.xml	(revision 3bf8025d06215191377d6652702f0b479034d971)
++++ b/app/src/main/res/layout/fragment_home.xml	(date 1747555183754)
+@@ -7,125 +7,12 @@
+     android:layout_height="match_parent"
+     android:fillViewport="true">
+ 
+-    <androidx.constraintlayout.widget.ConstraintLayout
++    <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
++        android:orientation="vertical"
+         android:padding="16dp">
+ 
+-        <!-- Nav RecyclerView -->
+-        <androidx.recyclerview.widget.RecyclerView
+-            android:id="@+id/navRV"
+-            android:layout_width="0dp"
+-            android:layout_height="wrap_content"
+-            android:layout_marginBottom="18dp"
+-            app:layout_constraintTop_toTopOf="parent"
+-            app:layout_constraintStart_toStartOf="parent"
+-            app:layout_constraintEnd_toEndOf="parent" />
+-
+-        <!-- Image CardView -->
+-        <androidx.cardview.widget.CardView
+-            android:id="@+id/imgNews1"
+-            android:layout_width="0dp"
+-            android:layout_height="wrap_content"
+-            android:layout_marginTop="5dp"
+-            android:layout_marginBottom="8dp"
+-            android:visibility="gone"
+-            app:cardCornerRadius="12dp"
+-            app:cardElevation="4dp"
+-            app:layout_constraintTop_toBottomOf="@id/navRV"
+-            app:layout_constraintStart_toStartOf="parent"
+-            app:layout_constraintEnd_toEndOf="parent">
+-
+-            <FrameLayout
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content">
+-
+-                <ImageView
+-                    android:id="@+id/imgOfNews1"
+-                    android:layout_width="match_parent"
+-                    android:layout_height="match_parent" />
+-
+-                <View
+-                    android:layout_width="match_parent"
+-                    android:layout_height="match_parent"
+-                    android:background="#90000000" />
+-
+-                <androidx.constraintlayout.widget.ConstraintLayout
+-                    android:layout_width="match_parent"
+-                    android:layout_height="match_parent"
+-                    android:padding="20dp">
+-
+-                    <TextView
+-                        android:id="@+id/titleOfNews1"
+-                        android:layout_width="0dp"
+-                        android:layout_height="wrap_content"
+-                        app:layout_constraintStart_toStartOf="parent"
+-                        app:layout_constraintEnd_toEndOf="parent"
+-                        app:layout_constraintBottom_toTopOf="@id/detailsRelativeLayout"
+-                        app:layout_constraintBottom_margin="10dp" />
+-
+-                    <androidx.constraintlayout.widget.ConstraintLayout
+-                        android:id="@+id/detailsRelativeLayout"
+-                        android:layout_width="0dp"
+-                        android:layout_height="wrap_content"
+-                        app:layout_constraintStart_toStartOf="parent"
+-                        app:layout_constraintEnd_toEndOf="parent"
+-                        app:layout_constraintBottom_toBottomOf="parent">
+-
+-                        <TextView
+-                            android:id="@+id/nameOfNews1"
+-                            android:layout_width="wrap_content"
+-                            android:layout_height="wrap_content"
+-                            app:layout_constraintStart_toStartOf="parent" />
+-
+-                        <TextView
+-                            android:id="@+id/timeAgoOfNews1"
+-                            android:layout_width="wrap_content"
+-                            android:layout_height="wrap_content"
+-                            android:visibility="invisible"
+-                            app:layout_constraintEnd_toEndOf="parent" />
+-                    </androidx.constraintlayout.widget.ConstraintLayout>
+-                </androidx.constraintlayout.widget.ConstraintLayout>
+-            </FrameLayout>
+-        </androidx.cardview.widget.CardView>
+-
+-        <!-- Shimmer Image -->
+-        <com.facebook.shimmer.ShimmerFrameLayout
+-            android:id="@+id/shimmerNews1"
+-            android:layout_width="0dp"
+-            android:layout_height="wrap_content"
+-            android:layout_marginTop="8dp"
+-            app:layout_constraintTop_toBottomOf="@id/imgNews1"
+-            app:layout_constraintStart_toStartOf="parent"
+-            app:layout_constraintEnd_toEndOf="parent"
+-            app:shimmer_auto_start="true"
+-            app:shimmer_duration="1500">
+-
+-            <include layout="@layout/shimmer_card_news_item" />
+-        </com.facebook.shimmer.ShimmerFrameLayout>
+-
+-        <!-- Featured Title -->
+-        <TextView
+-            android:id="@+id/newsStatus"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text="Tin tức nổi bật"
+-            android:textSize="30sp"
+-            android:textStyle="bold"
+-            app:layout_constraintTop_toBottomOf="@id/shimmerNews1"
+-            app:layout_constraintStart_toStartOf="parent" />
+-
+-        <!-- Shimmer List -->
+-        <com.facebook.shimmer.ShimmerFrameLayout
+-            android:id="@+id/shimmerFrameLayout"
+-            android:layout_width="0dp"
+-            android:layout_height="wrap_content"
+-            android:visibility="visible"
+-            app:layout_constraintTop_toBottomOf="@id/newsStatus"
+-            app:layout_constraintStart_toStartOf="parent"
+-            app:layout_constraintEnd_toEndOf="parent"
+-            app:shimmer_auto_start="true"
+-            app:shimmer_duration="1500">
+         <!-- RecyclerView cho danh mục -->
+         <androidx.recyclerview.widget.RecyclerView
+             android:id="@+id/navbarRecyclerView"
+@@ -146,28 +33,6 @@
+             <LinearLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+-                android:orientation="vertical"
+-                android:padding="8dp"
+-                android:clipToPadding="false">
+-
+-                <include layout="@layout/shimmer_news_item"
+-                    android:layout_width="match_parent"
+-                    android:layout_height="wrap_content"
+-                     />
+-
+-                <include layout="@layout/shimmer_news_item"
+-                    android:layout_width="match_parent"
+-                    android:layout_height="wrap_content"
+-                     />
+-
+-                <include layout="@layout/shimmer_news_item"
+-                    android:layout_width="match_parent"
+-                    android:layout_height="wrap_content"
+-                     />
+-            </LinearLayout>
+-        </com.facebook.shimmer.ShimmerFrameLayout>
+-
+-        <!-- News RecyclerView -->
+                 android:orientation="vertical">
+                 <!-- Shimmer cho bài viết nổi bật -->
+                 <View
+@@ -235,54 +100,11 @@
+         <!-- Danh sách tin tức -->
+         <androidx.recyclerview.widget.RecyclerView
+             android:id="@+id/newsRecyclerView"
+-            android:layout_width="0dp"
++            android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="8dp"
+-            android:visibility="gone"
+             android:nestedScrollingEnabled="false"
+-            app:layout_constraintTop_toBottomOf="@id/shimmerFrameLayout"
+-            app:layout_constraintStart_toStartOf="parent"
+-            app:layout_constraintEnd_toEndOf="parent" />
+-    </androidx.constraintlayout.widget.ConstraintLayout>
+-    <LinearLayout
+-        android:id="@+id/noNewsLL"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent"
+-        android:orientation="vertical"
+-        android:gravity="center"
+-        android:visibility="gone">
+-
+-        <ImageView
+-            android:layout_width="250sp"
+-            android:layout_height="250sp"
+-            android:src="@drawable/no_news_found"
+-            android:scaleType="centerCrop"
+-            android:visibility="visible"/>
+-
+-        <TextView
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text="Không tìm thấy tin tức"
+-            android:textColor="#04010B"
+-            android:textSize="30sp"
+-            android:layout_marginTop="10sp"/>
+-
+-        <TextView
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:gravity="center"
+-            android:maxWidth="350sp"
+-            android:text="Hãy thử các bộ lọc khác"
+-            android:textColor="#04010B"
+-            android:layout_marginTop="5sp"/>
+-    </LinearLayout>
+-
+-    <View
+-        android:id="@+id/dimOverlay"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent"
+-        android:background="#00000000"
+-        android:visibility="gone" />
+-</androidx.core.widget.NestedScrollView>
++            android:visibility="gone"/>
++
+     </LinearLayout>
+-</androidx.core.widget.NestedScrollView>
++</androidx.core.widget.NestedScrollView>
+\ No newline at end of file
