@@ -1,9 +1,18 @@
 <resources>
     <string name="app_name">Tin Nhanh</string>
-    <string name="home">Trang Chủ</string>
-    <string name="search">Tìm Kiếm</string>
-    <string name="watch_later">Xem Sau</string>
-    <string name="settings">Cài Đặt</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Tin nhắn</string>
+    <string name="sync_header">Đồng bộ</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Chữ ký của bạn</string>
+    <string name="reply_title">Hành động trả lời mặc định</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Đồng bộ email định kỳ</string>
+    <string name="attachment_title">Tải xuống tệp đính kèm đến</string>
+    <string name="attachment_summary_on">Tự động tải xuống tệp đính kèm cho email đến</string>
+    <string name="attachment_summary_off">Chỉ tải xuống tệp đính kèm khi được yêu cầu thủ công</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Xin chào fragment trống</string>
@@ -11,4 +20,114 @@
     <!-- Filter Preferences -->
     <string name="select_language">Chọn Ngôn Ngữ</string>
     <string name="select_country">Chọn Quốc Gia</string>
+    <string name="select_source">Chọn Nguồn</string>
+    <string name="select_max">Chọn Số Bài Tối Đa</string>
+    <string name="select_sort">Mới Nhất Trước</string>
+    <string name="select_time_after">Chọn Khoảng Lặp Lại</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Cài Đặt</string>
+    <string name="notifications_section">Thông Báo</string>
+    <string name="show_notifications">Hiển Thị Thông Báo</string>
+    <string name="show_notifications_desc">Bật Thông Báo để nhận thông tin về tin tức mới nhất.</string>
+    <string name="first_notification_at">Thông Báo Đầu Tiên Vào:</string>
+    <string name="first_notification_desc">Đây sẽ là thông báo đầu tiên trong ngày.</string>
+    <string name="repeat_after">Lặp Lại Sau</string>
+    <string name="news_preferences">Tùy Chọn Tin Tức</string>
+    <string name="data_section">Dữ Liệu</string>
+    <string name="delete_data">Xóa Dữ Liệu</string>
+    <string name="delete_data_desc">Thao tác này sẽ xóa tất cả tin tức trong mục xem sau và dữ liệu bạn đã đặt trong trang cài đặt.</string>
+    <string name="set_time">Đặt</string>
+
+    <!-- Reply Preferences -->
+    <string name="reply">Trả lời</string>
+    <string name="reply_to_all">Trả lời tất cả</string>
+
+    <!-- Language Options -->
+    <string name="language_select">Chọn Ngôn Ngữ</string>
+    <string name="language_arabic">Tiếng Ả Rập (ar)</string>
+    <string name="language_chinese">Tiếng Trung (zh)</string>
+    <string name="language_dutch">Tiếng Hà Lan (nl)</string>
+    <string name="language_english">Tiếng Anh (en)</string>
+    <string name="language_french">Tiếng Pháp (fr)</string>
+    <string name="language_german">Tiếng Đức (de)</string>
+    <string name="language_hebrew">Tiếng Do Thái (he)</string>
+    <string name="language_hindi">Tiếng Hindi (hi)</string>
+    <string name="language_italian">Tiếng Ý (it)</string>
+    <string name="language_norwegian">Tiếng Na Uy (no)</string>
+    <string name="language_portuguese">Tiếng Bồ Đào Nha (pt)</string>
+    <string name="language_russian">Tiếng Nga (ru)</string>
+    <string name="language_spanish">Tiếng Tây Ban Nha (es)</string>
+    <string name="language_swedish">Tiếng Thụy Điển (sv)</string>
+    <string name="language_vietnamese">Tiếng Việt (vi)</string>
+
+    <!-- Country Options -->
+    <string name="country_select">Chọn Quốc Gia</string>
+    <string name="country_argentina">Argentina (ar)</string>
+    <string name="country_australia">Úc (au)</string>
+    <string name="country_austria">Áo (at)</string>
+    <string name="country_belgium">Bỉ (be)</string>
+    <string name="country_brazil">Brazil (br)</string>
+    <string name="country_bulgaria">Bulgaria (bg)</string>
+    <string name="country_canada">Canada (ca)</string>
+    <string name="country_china">Trung Quốc (cn)</string>
+    <string name="country_colombia">Colombia (co)</string>
+    <string name="country_cuba">Cuba (cu)</string>
+    <string name="country_czech_republic">Cộng hòa Séc (cz)</string>
+    <string name="country_egypt">Ai Cập (eg)</string>
+    <string name="country_france">Pháp (fr)</string>
+    <string name="country_germany">Đức (de)</string>
+    <string name="country_greece">Hy Lạp (gr)</string>
+    <string name="country_hong_kong">Hồng Kông (hk)</string>
+    <string name="country_hungary">Hungary (hu)</string>
+    <string name="country_india">Ấn Độ (in)</string>
+    <string name="country_indonesia">Indonesia (id)</string>
+    <string name="country_ireland">Ireland (ie)</string>
+    <string name="country_israel">Israel (il)</string>
+    <string name="country_italy">Ý (it)</string>
+    <string name="country_japan">Nhật Bản (jp)</string>
+    <string name="country_latvia">Latvia (lv)</string>
+    <string name="country_lithuania">Lithuania (lt)</string>
+    <string name="country_malaysia">Malaysia (my)</string>
+    <string name="country_mexico">Mexico (mx)</string>
+    <string name="country_morocco">Ma-rốc (ma)</string>
+    <string name="country_netherlands">Hà Lan (nl)</string>
+    <string name="country_new_zealand">New Zealand (nz)</string>
+    <string name="country_nigeria">Nigeria (ng)</string>
+    <string name="country_norway">Na Uy (no)</string>
+    <string name="country_philippines">Philippines (ph)</string>
+    <string name="country_poland">Ba Lan (pl)</string>
+    <string name="country_portugal">Bồ Đào Nha (pt)</string>
+    <string name="country_romania">Romania (ro)</string>
+    <string name="country_russia">Nga (ru)</string>
+    <string name="country_saudi_arabia">Ả Rập Saudi (sa)</string>
+    <string name="country_serbia">Serbia (rs)</string>
+    <string name="country_singapore">Singapore (sg)</string>
+    <string name="country_slovakia">Slovakia (sk)</string>
+    <string name="country_slovenia">Slovenia (si)</string>
+    <string name="country_south_africa">Nam Phi (za)</string>
+    <string name="country_south_korea">Hàn Quốc (kr)</string>
+    <string name="country_sweden">Thụy Điển (se)</string>
+    <string name="country_switzerland">Thụy Sĩ (ch)</string>
+    <string name="country_taiwan">Đài Loan (tw)</string>
+    <string name="country_thailand">Thái Lan (th)</string>
+    <string name="country_turkey">Thổ Nhĩ Kỳ (tr)</string>
+    <string name="country_uae">UAE (ae)</string>
+    <string name="country_ukraine">Ukraine (ua)</string>
+    <string name="country_united_kingdom">Vương Quốc Anh (gb)</string>
+    <string name="country_united_states">Hoa Kỳ (us)</string>
+    <string name="country_venezuela">Venezuela (ve)</string>
+    <string name="country_vietnam">Việt Nam (vn)</string>
+
+    <!-- Number Options -->
+    <string name="max_articles">Số Bài Tối Đa</string>
+
+    <!-- Time After Options -->
+    <string name="time_24_hours">24 Giờ</string>
+    <string name="time_12_hours">12 Giờ</string>
+    <string name="time_6_hours">6 Giờ</string>
+
+    <!-- Sort By Options -->
+    <string name="sort_oldest_first">Cũ Nhất Trước</string>
+    <string name="sort_newest_first">Mới Nhất Trước</string>
 </resources>
