@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.news.NewsModel;
 import com.example.news.R;
+import com.example.news.utils.NewsDetailBottomSheet;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,7 +60,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         NewsModel.Articles article = articleList.get(position);
         holder.title.setText(article.getTitle());
         holder.newsSource.setText(article.getSource().getName());
-        holder.newsTimeAgo.setText(getTimeAgo(article.getPublishedAt()));
+        holder.newsTimeAgo.setText(timeDifference(article.getPublishedAt()));
 
         Glide.with(context)
                 .load(article.getUrlToImage())
@@ -68,23 +69,23 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
         holder.itemView.setOnClickListener(v -> {
             NewsDetailBottomSheet bottomSheet = new NewsDetailBottomSheet();
-            if (articles.getUrlToImage() != null) {
+            if (article.getUrlToImage() != null) {
                 bottomSheet.setNewsData(
-                        articles.getUrlToImage(),
-                        articles.getSource().getName(),
-                        articles.getTitle(),
-                        timeDifference(articles.getPublishedAt()),
-                        articles.getUrl(),
-                        articles.getContent()
+                        article.getUrlToImage(),
+                        article.getSource().getName(),
+                        article.getTitle(),
+                        timeDifference(article.getPublishedAt()),
+                        article.getUrl(),
+                        article.getContent()
                 );
             } else {
                 bottomSheet.setNewsData(
                         "https://apdl.lu/wp-content/uploads/2017/09/news-636978_1280.jpg",
-                        articles.getSource().getName(),
-                        articles.getTitle(),
-                        timeDifference(articles.getPublishedAt()),
-                        articles.getUrl(),
-                        articles.getContent()
+                        article.getSource().getName(),
+                        article.getTitle(),
+                        timeDifference(article.getPublishedAt()),
+                        article.getUrl(),
+                        article.getContent()
                 );
             }
             bottomSheet.setOverlayVisibilityListener(listener);
@@ -100,9 +101,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
                         .setCancelable(false)
                         .setPositiveButton("Có", (dialogInterface, i) -> {
                             db.deleteSavedNews(articles.getUrl());
-                            arrayList.remove(arrayList.get(position));
+                            articleList.remove(articleList.get(position));
                             notifyItemRemoved(holder.getAdapterPosition());
-                            notifyItemRangeChanged(position, arrayList.size());
+                            notifyItemRangeChanged(position, articleList.size());
                         })
                         .setNegativeButton("Không", (dialogInterface, i) -> {
                             // Không làm gì
@@ -141,7 +142,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
     }
 
     // Chuyển đổi thời gian đăng sang định dạng "x phút trước"
-    public static String getTimeAgo(String dateTimeString) {
+    public static String timeDifference(String dateTimeString) {
         try {
             SimpleDateFormat sdf = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
