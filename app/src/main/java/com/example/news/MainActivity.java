@@ -99,7 +99,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
+    // Hàm thiết lập ViewPager với các fragment
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), ViewPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        adapter.addFragment(homeFragment);
+        adapter.addFragment(searchFragment);
+        adapter.addFragment(watchLaterFragment);
+        adapter.addFragment(settingsFragment);
+        viewPager.setAdapter(adapter);
+    }
 
     // Hàm thiết lập màu thanh trạng thái
     public void setStatusBarColor(int color) {
