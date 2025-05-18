@@ -66,10 +66,13 @@ public class NewsModel {
             return source;
         }
 
+<<<<<<< HEAD
+=======
         // Phương thức setter để thiết lập nguồn của bài viết.
         public void setSource(Source source) {
             this.source = source;
         }
+>>>>>>> 483bc3c5061cd5878fe0d84af5d33002a66d6423
 
         // Phương thức getter để lấy tiêu đề của bài viết.
         public String getTitle() {

@@ -1,110 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nestedScrollView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/mainLL"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:paddingLeft="20sp"
+        android:paddingRight="20sp"
+        android:paddingTop="20sp"
+        android:orientation="vertical">
 
-        <!-- RecyclerView cho danh mục -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/navbarRecyclerView"
+            android:id="@+id/navRV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20sp"/>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            android:orientation="vertical">
 
-        <!-- Shimmer cho toàn bộ nội dung -->
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/shimmerFrameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:visibility="visible">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/imgNews1"
+                android:layout_width="match_parent"
+                android:layout_height="215sp"
+                app:cardCornerRadius="20sp"
+                android:visibility="gone">
 
-            <LinearLayout
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!-- Hình ảnh nền -->
+                    <ImageView
+                        android:id="@+id/imgOfNews1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/news_placeholder_img"
+                        android:scaleType="centerCrop"/>
+
+                    <!-- Lớp phủ đen -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#80000000" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="20sp">
+
+                        <TextView
+                            android:id="@+id/titleOfNews1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@id/detailsRelativeLayout"
+                            android:layout_gravity="bottom"
+                            android:layout_marginBottom="10sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:lineSpacingExtra="5sp"
+                            android:lines="2"
+                            android:text=""
+                            android:textColor="@color/white"
+                            android:textSize="18sp" />
+
+                        <RelativeLayout
+                            android:id="@+id/detailsRelativeLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true">
+
+                            <TextView
+                                android:id="@+id/nameOfNews1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=""
+                                android:textColor="@color/white"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/timeAgoOfNews1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:drawablePadding="3sp"
+                                android:text=""
+                                android:textColor="@color/white"
+                                android:textSize="13sp"
+                                android:visibility="invisible"
+                                app:drawableLeftCompat="@drawable/hours_ago_icon"
+                                app:drawableTint="@color/white" />
+                        </RelativeLayout>
+                    </RelativeLayout>
+                </FrameLayout>
+            </androidx.cardview.widget.CardView>
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmerNews1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <!-- Shimmer cho bài viết nổi bật -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:background="@android:color/darker_gray"
-                    android:layout_marginBottom="8dp"/>
-                <!-- Shimmer cho danh sách tin tức -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:background="@android:color/darker_gray"
-                    android:layout_marginVertical="6dp"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:background="@android:color/darker_gray"
-                    android:layout_marginVertical="6dp"/>
-            </LinearLayout>
-        </com.facebook.shimmer.ShimmerFrameLayout>
+                app:shimmer_auto_start="true"
+                app:shimmer_duration="1500">
 
-        <!-- Tin tức nổi bật -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/imgNews1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:visibility="gone"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
+                <include layout="@layout/shimmer_card_news_item"/>
+            </com.facebook.shimmer.ShimmerFrameLayout>
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/newsStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tin tức nổi bật"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:drawableRight="@drawable/news_icon"
+                android:drawablePadding="10sp"
+                android:layout_marginVertical="20sp"/>
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmerFrameLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:visibility="visible">
 
-                <ImageView
-                    android:id="@+id/imgOfNews1"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:scaleType="centerCrop"
-                    android:contentDescription="Hình ảnh tin tức nổi bật"/>
-
-                <TextView
-                    android:id="@+id/titleOfNews1"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:text="Tiêu đề tin tức"
-                    android:textSize="18sp"
-                    android:textStyle="bold"/>
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/nameOfNews1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="8dp"
-                    android:paddingBottom="8dp"
-                    android:text="Nguồn tin"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/darker_gray"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                    <include layout="@layout/shimmer_news_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="30sp" />
 
-        <!-- Danh sách tin tức -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/newsRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:nestedScrollingEnabled="false"
-            android:visibility="gone"/>
+                    <include layout="@layout/shimmer_news_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="30sp" />
 
+                    <include layout="@layout/shimmer_news_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="30sp" />
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/newsRV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
     </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/noNewsLL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="250sp"
+            android:layout_height="250sp"
+            android:src="@drawable/no_news_found"
+            android:scaleType="centerCrop"
+            android:visibility="visible"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Không tìm thấy tin tức"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:layout_marginTop="10sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxWidth="350sp"
+            android:text="Hãy thử các bộ lọc khác"
+            android:textColor="@color/black"
+            android:layout_marginTop="5sp"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/dimOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00000000"
+        android:visibility="gone" />
+</RelativeLayout>
