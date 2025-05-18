@@ -23,15 +23,15 @@ import java.time.Instant;
 import java.util.ArrayList;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
-    ArrayList<NewsModel.Articles> articlesList = new ArrayList<>();
+    ArrayList<NewsModel.Articles> arrayList;
     Context context;
     String fragment;
     DbHelper db;
     OverlayVisibilityListener listener;
 
     // Constructor khởi tạo adapter với danh sách tin tức, context, tên fragment và listener
-    public NewsAdapter(ArrayList<NewsModel.Articles> articlesList, Context context, String fragment, OverlayVisibilityListener listener) {
-        this.articlesList = articlesList;
+    public NewsAdapter(ArrayList<NewsModel.Articles> arrayList, Context context, String fragment, OverlayVisibilityListener listener) {
+        this.arrayList = arrayList;
         this.context = context;
         this.fragment = fragment;
         this.listener = listener;
@@ -54,7 +54,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        NewsModel.Articles articles = articlesList.get(position);
+        NewsModel.Articles articles = arrayList.get(position);
         holder.newsTitle.setText(articles.getTitle());
         holder.newsSource.setText(articles.getSource().getName());
         holder.newsTimeAgo.setText(timeDifference(articles.getPublishedAt()));
@@ -100,9 +100,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                             .setCancelable(false)
                             .setPositiveButton("Có", (dialogInterface, i) -> {
                                 db.deleteSavedNews(articles.getUrl());
-                                articlesList.remove(articlesList.get(position));
+                                arrayList.remove(arrayList.get(position));
                                 notifyItemRemoved(holder.getAdapterPosition());
-                                notifyItemRangeChanged(position, articlesList.size());
+                                notifyItemRangeChanged(position, arrayList.size());
                             })
                             .setNegativeButton("Không", (dialogInterface, i) -> {
                                 // Không làm gì
@@ -116,7 +116,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return articlesList.isEmpty() ? 0 : articlesList.size();
+        return arrayList.size();
     }
 
     // Hàm tính thời gian chênh lệch từ thời điểm xuất bản
