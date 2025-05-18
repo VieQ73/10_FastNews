@@ -1,4 +1,4 @@
-package com.example.fastnews;
+package com.example.news;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -6,18 +6,20 @@ import retrofit2.http.Query;
 
 public interface NewsApi {
     @GET("top-headlines")
-    Call<NewsModel> getTopHeadlines(
+    Call<NewsModel> getNewsByCategory(
+            @Query("token") String apiKey,
             @Query("category") String category,
             @Query("lang") String language,
             @Query("country") String country,
-            @Query("apikey") String apiKey
+            @Query("max") int max
     );
 
-    // Ví dụ về một endpoint khác, ví dụ tìm kiếm tin tức
     @GET("search")
-    Call<NewsModel> searchNews(
-            @Query("q") String query,
+    Call<NewsModel> getNewsByKeywords(
+            @Query("token") String apiKey,
+            @Query("q") String keywords,
             @Query("lang") String language,
-            @Query("apikey") String apiKey
+            @Query("country") String country,
+            @Query("max") int max
     );
 }

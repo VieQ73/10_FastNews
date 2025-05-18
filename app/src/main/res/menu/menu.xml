@@ -1,24 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
-        android:id="@+id/home"
+        android:id="@+id/menu_home"
         android:icon="@drawable/home_icon"
-        android:title="@string/home" />
-
+        android:title="Trang chủ" />
     <item
-        android:id="@+id/search"
+        android:id="@+id/menu_search"
         android:icon="@drawable/search_icon"
-        android:title="@string/search" />
-
+        android:title="Tìm kiếm" />
     <item
-        android:id="@+id/watch_later"
+        android:id="@+id/menu_subscription"
         android:icon="@drawable/watch_later_icon"
-        android:title="@string/watch_later" />
-
+        android:title="Xem sau" />
     <item
-        android:id="@+id/settings"
+        android:id="@+id/menu_personal"
         android:icon="@drawable/setting_icon"
-        android:title="@string/settings" />
-
+        android:title="Cài đặt" />
 </menu>
