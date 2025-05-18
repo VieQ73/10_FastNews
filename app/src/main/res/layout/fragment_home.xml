@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-<<<<<<< HEAD
         <!-- Nav RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/navRV"
@@ -127,7 +126,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:shimmer_auto_start="true"
             app:shimmer_duration="1500">
-=======
         <!-- RecyclerView cho danh mục -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/navbarRecyclerView"
@@ -144,12 +142,10 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:visibility="visible">
->>>>>>> 483bc3c5061cd5878fe0d84af5d33002a66d6423
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-<<<<<<< HEAD
                 android:orientation="vertical"
                 android:padding="8dp"
                 android:clipToPadding="false">
@@ -172,7 +168,6 @@
         </com.facebook.shimmer.ShimmerFrameLayout>
 
         <!-- News RecyclerView -->
-=======
                 android:orientation="vertical">
                 <!-- Shimmer cho bài viết nổi bật -->
                 <View
@@ -238,15 +233,13 @@
         </androidx.cardview.widget.CardView>
 
         <!-- Danh sách tin tức -->
->>>>>>> 483bc3c5061cd5878fe0d84af5d33002a66d6423
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/newsRV"
+            android:id="@+id/newsRecyclerView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:visibility="gone"
             android:nestedScrollingEnabled="false"
-<<<<<<< HEAD
             app:layout_constraintTop_toBottomOf="@id/shimmerFrameLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -291,9 +284,5 @@
         android:background="#00000000"
         android:visibility="gone" />
 </androidx.core.widget.NestedScrollView>
-=======
-            android:visibility="gone"/>
-
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
->>>>>>> 483bc3c5061cd5878fe0d84af5d33002a66d6423
