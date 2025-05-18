@@ -1,4 +1,4 @@
-package com.example.news.fragment;
+package com.example.news.fragments;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
