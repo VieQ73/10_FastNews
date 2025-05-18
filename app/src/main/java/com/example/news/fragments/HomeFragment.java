@@ -1,8 +1,6 @@
 package com.example.news.fragments;
 
 import android.graphics.Color;
-import android.icu.text.SimpleDateFormat;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,13 +29,13 @@ import com.example.news.data.SharedPreferencesHelper;
 import com.example.news.utils.NewsDetailBottomSheet;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
-import java.text.ParseException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,29 +43,30 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-// HomeFragment hiển thị danh sách danh mục và tin tức
 public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryClickListener, NewsAdapter.OverlayVisibilityListener {
+    RecyclerView navRV, newsRV;
+    NavbarAdapter navAdapter;
+    NewsAdapter newsAdapter;
+    ArrayList<String> navArrayList = new ArrayList<>();
+    ArrayList<NewsModel.Articles> newsArrayList = new ArrayList<>();
 
-    private RecyclerView navbarRecyclerView, newsRecyclerView;
-    private NavbarAdapter navbarAdapter;
-    private NewsAdapter newsAdapter;
-    private ArrayList<String> navItems = new ArrayList<>();
-    private ArrayList<NewsModel.Articles> newsItems = new ArrayList<>();
+    ImageView imgOfNews1;
+    CardView imgNews1;
+    TextView titleOfNews1, nameOfNews1, timeAgoOfNews1, newsStatus;
 
-    private CardView imgNews1;
-    private ImageView imgOfNews1;
-    private TextView titleOfNews1, nameOfNews1, timeAgoOfNews1, newsStatus;
+    String defaultLanguage, defaultCountry;
+    int defaultMaxNews;
 
-    private String defaultLanguage, defaultCountry;
+    ShimmerFrameLayout shimmerFrameLayout, shimmerNews1;
 
-    private int defaultMaxNews;
+    LinearLayout mainLL, noNewsLL;
 
-    private LinearLayout mainLL, noNewsLL;
-
-    private View dimOverlay;
-    private ShimmerFrameLayout shimmerFrameLayout, shimmerNews1;
+    View dimOverlay;
 
     SharedPreferencesHelper helper;
+
+    // Ánh xạ danh mục tiếng Việt sang tiếng Anh cho GNews API
+    private final Map<String, String> categoryMap = new HashMap<>();
 
     public HomeFragment() {
     }
@@ -77,130 +76,127 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // Khởi tạo giao diện bài viết nổi bật
         imgNews1 = view.findViewById(R.id.imgNews1);
         imgOfNews1 = view.findViewById(R.id.imgOfNews1);
         titleOfNews1 = view.findViewById(R.id.titleOfNews1);
         nameOfNews1 = view.findViewById(R.id.nameOfNews1);
         timeAgoOfNews1 = view.findViewById(R.id.timeAgoOfNews1);
         newsStatus = view.findViewById(R.id.newsStatus);
+
+        shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);
+        shimmerNews1 = view.findViewById(R.id.shimmerNews1);
+
         mainLL = view.findViewById(R.id.mainLL);
         noNewsLL = view.findViewById(R.id.noNewsLL);
+
         dimOverlay = view.findViewById(R.id.dimOverlay);
 
         helper = new SharedPreferencesHelper(getContext());
+
         checkForDefault();
 
-        // Khởi tạo ShimmerFrameLayout
-        shimmerFrameLayout = view.findViewById(R.id.shimmerFrameLayout);
+        // Khởi tạo ánh xạ danh mục
+        categoryMap.put("tổng quát", "general");
+        categoryMap.put("giải trí", "entertainment");
+        categoryMap.put("kinh doanh", "business");
+        categoryMap.put("thể thao", "sports");
+        categoryMap.put("sức khỏe", "health");
+        categoryMap.put("công nghệ", "technology");
+
+        navArrayList.clear();
+        Collections.addAll(navArrayList, "Tổng quát", "Giải trí", "Kinh doanh", "Thể thao", "Sức khỏe", "Công nghệ");
+
+        navRV = view.findViewById(R.id.navRV);
+        navAdapter = new NavbarAdapter(navArrayList, getContext());
+        navRV.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        navRV.setAdapter(navAdapter);
+        navAdapter.setOnCategoryClickListener(this);
+
+        newsRV = view.findViewById(R.id.newsRV);
+        newsAdapter = new NewsAdapter(newsArrayList, getContext(), "Trang chủ", this);
+        newsRV.setLayoutManager(new LinearLayoutManager(getContext()));
+        newsRV.setAdapter(newsAdapter);
+
         shimmerFrameLayout.startShimmer();
-        shimmerNews1 = view.findViewById(R.id.shimmerNews1);
         shimmerNews1.startShimmer();
 
-        // Khởi tạo RecyclerView cho danh mục
-        navbarRecyclerView = view.findViewById(R.id.navRV);
-        navbarRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-
-        // Thêm danh mục tin tức
-        navItems.add("Sports");
-        navItems.add("Entertainment");
-        navItems.add("Technology");
-        navItems.add("Business");
-        navItems.add("Health");
-
-        navbarAdapter = new NavbarAdapter(navItems, getContext());
-        navbarAdapter.setOnCategoryClickListener(this);
-        navbarRecyclerView.setAdapter(navbarAdapter);
-
-        // Khởi tạo RecyclerView cho tin tức
-        newsRecyclerView = view.findViewById(R.id.newsRV);
-        newsAdapter = new NewsAdapter(newsItems, getContext(), "Home", this);
-        newsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        newsRecyclerView.setAdapter(newsAdapter);
-
-        // Tải tin tức mặc định
-        getNews("Sports");
+        getNews("Tổng quát");
 
         return view;
     }
 
-    // Xử lý khi nhấn danh mục
-    @Override
-    public void onCategoryClick(String category) {
-        shimmerFrameLayout.setVisibility(View.VISIBLE);
-        shimmerFrameLayout.startShimmer();
-        shimmerNews1.setVisibility(View.VISIBLE);
-        shimmerNews1.startShimmer();
-        newsRecyclerView.setVisibility(View.GONE);
-        imgNews1.setVisibility(View.GONE);
-        getNews(category);
-    }
-
-    // Tải tin tức từ GNews API
-    private void getNews(String category) {
+    public void getNews(String category) {
         String API_KEY = "ca9fed4acd8ed6f43b8b793edfde087b";
         String BASE_URL = "https://gnews.io/api/v4/";
+        String country = defaultCountry;
+        String language = defaultLanguage != null ? defaultLanguage : "vi";
+        int maxNews = defaultMaxNews;
+
+        // Chuyển danh mục tiếng Việt sang tiếng Anh
+        String apiCategory = categoryMap.getOrDefault(category.toLowerCase(), "general");
+        Log.d("HomeFragment", "Calling API with category: " + apiCategory);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
+        newsArrayList.clear();
+
         NewsApi newsApi = retrofit.create(NewsApi.class);
-        Call<NewsModel> call = newsApi.getNewsByCategory(API_KEY, category.toLowerCase(), "en", "us", 10);
+        Call<NewsModel> call = newsApi.getNewsByCategory(API_KEY, apiCategory, language, country, maxNews);
+
+        Log.d("HomeFragment", "API Request URL: " + call.request().url().toString());
 
         call.enqueue(new Callback<NewsModel>() {
             @Override
             public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
                 shimmerFrameLayout.stopShimmer();
                 shimmerFrameLayout.setVisibility(View.GONE);
-                newsRecyclerView.setVisibility(View.VISIBLE);
+                shimmerNews1.stopShimmer();
+                shimmerNews1.setVisibility(View.GONE);
+                newsRV.setVisibility(View.VISIBLE);
                 imgNews1.setVisibility(View.VISIBLE);
 
                 if (response.isSuccessful() && response.body() != null) {
-                    List<NewsModel.Articles> articles = response.body().getArticles();
-                    if (articles != null && !articles.isEmpty()) {
-                        // Hiển thị bài viết nổi bật
-                        NewsModel.Articles firstArticle = articles.get(0);
+                    List<NewsModel.Articles> allArticles = response.body().getArticles();
+                    Log.d("HomeFragment", "Received articles: " + (allArticles != null ? allArticles.size() : 0));
+                    if (allArticles != null && !allArticles.isEmpty()) {
+                        NewsModel.Articles firstArticle = allArticles.get(0);
                         updateUIWithFirstArticle(firstArticle);
-
-                        // Thêm sự kiện nhấn cho bài viết nổi bật
-                        imgOfNews1.setOnClickListener(v -> {
-                            Toast.makeText(getContext(), "Clicked: " + firstArticle.getTitle(), Toast.LENGTH_SHORT).show();
-                        });
 
                         mainLL.setVisibility(View.VISIBLE);
                         noNewsLL.setVisibility(View.GONE);
 
-                        // Cập nhật danh sách tin tức
-                        newsItems.clear();
-                        newsItems.addAll(articles.subList(1, articles.size()));
+                        newsArrayList.clear(); // Xóa lại để đảm bảo không giữ dữ liệu cũ
+                        newsArrayList.addAll(allArticles.subList(1, allArticles.size()));
                         newsAdapter.notifyDataSetChanged();
                     } else {
-                        shimmerFrameLayout.stopShimmer();
-                        shimmerFrameLayout.setVisibility(View.GONE);
-                        shimmerNews1.stopShimmer();
-                        shimmerNews1.setVisibility(View.GONE);
-                        newsRecyclerView.setVisibility(View.VISIBLE);
-                        imgNews1.setVisibility(View.VISIBLE);
+                        Toast.makeText(getContext(), "Không tìm thấy bài viết cho danh mục này.", Toast.LENGTH_SHORT).show();
                         mainLL.setVisibility(View.GONE);
                         noNewsLL.setVisibility(View.VISIBLE);
-                        Toast.makeText(getContext(), "No news available", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    Toast.makeText(getContext(), "Không thể tải tin tức. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
+                    mainLL.setVisibility(View.GONE);
+                    noNewsLL.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
-            public void onFailure(Call<NewsModel> call, Throwable t) {
+            public void onFailure(@NonNull Call<NewsModel> call, Throwable t) {
                 shimmerFrameLayout.stopShimmer();
                 shimmerFrameLayout.setVisibility(View.GONE);
                 shimmerNews1.stopShimmer();
                 shimmerNews1.setVisibility(View.GONE);
-                newsRecyclerView.setVisibility(View.VISIBLE);
+                newsRV.setVisibility(View.VISIBLE);
                 imgNews1.setVisibility(View.VISIBLE);
+
                 mainLL.setVisibility(View.GONE);
                 noNewsLL.setVisibility(View.VISIBLE);
-                Toast.makeText(getContext(), "Failed to load news", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("HomeFragment", "API call failed: " + t.getMessage());
             }
         });
     }
@@ -213,22 +209,19 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
         String urlImage = article.getUrlToImage();
         String urlToWeb = article.getUrl();
 
-        // Ghi log thông tin bài viết để debug
-        Log.d("HomeFragment", "Cập nhật giao diện: Tiêu đề=" + title + ", Nguồn=" + name + ", Hình ảnh=" + urlImage);
+        Log.d("HomeFragment", "Updating UI: Title=" + title + ", Source=" + name + ", Image=" + urlImage);
 
-        // Cập nhật các thành phần giao diện
         titleOfNews1.setText(title);
         nameOfNews1.setText(name);
         timeAgoOfNews1.setText(time);
         Glide.with(getContext()).load(urlImage).placeholder(R.drawable.news_placeholder_img).into(imgOfNews1);
 
-        // Thiết lập sự kiện click để mở chi tiết bài viết
         imgOfNews1.setOnClickListener(v -> {
             NewsDetailBottomSheet bottomSheet = new NewsDetailBottomSheet();
             if (urlImage != null) {
                 bottomSheet.setNewsData(urlImage, name, title, time, urlToWeb, content);
             } else {
-                bottomSheet.setNewsData("https://apdl.lu/wp-content/uploads/2017/09/news-636978_1280.jpg", name, title, time, urlToWeb, content);
+                bottomSheet.setNewsData("https://cdn.pixabay.com/photo/2015/02/15/09/33/news-636978_1280.jpg", name, title, time, urlToWeb, content);
             }
             bottomSheet.setOverlayVisibilityListener(this);
             bottomSheet.show(getActivity().getSupportFragmentManager(), "newsDetailBottomSheet");
@@ -236,14 +229,17 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
         });
     }
 
-    private void checkForDefault() {
-        defaultLanguage = helper.getLanguage();
-        defaultCountry = helper.getCountry();
-        defaultMaxNews = helper.getMaxNumbers();
-
+    @Override
+    public void onCategoryClicked(String category) {
+        shimmerFrameLayout.setVisibility(View.VISIBLE);
+        shimmerFrameLayout.startShimmer();
+        shimmerNews1.setVisibility(View.VISIBLE);
+        shimmerNews1.startShimmer();
+        imgNews1.setVisibility(View.GONE);
+        newsRV.setVisibility(View.GONE);
+        getNews(category);
     }
 
-    // Hàm tính thời gian chênh lệch từ thời điểm xuất bản
     public static String timeDifference(String dateTimeString) {
         if (dateTimeString.contains("giờ") || dateTimeString.contains("phút")) return dateTimeString;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -259,8 +255,17 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
             } else {
                 return hoursPassed + " giờ trước";
             }
+        } else {
+            return dateTimeString;
         }
-        return dateTimeString;
+    }
+
+    private void checkForDefault() {
+        defaultLanguage = helper.getLanguage();
+        defaultCountry = helper.getCountry();
+        defaultMaxNews = helper.getMaxNumbers();
+
+        Log.d("HomeFragment", "Language: " + defaultLanguage + ", Country: " + defaultCountry + ", Max news: " + defaultMaxNews);
     }
 
     @Override
@@ -272,6 +277,6 @@ public class HomeFragment extends Fragment implements NavbarAdapter.OnCategoryCl
     @Override
     public void hideOverlay() {
         dimOverlay.setVisibility(View.GONE);
-        ((MainActivity) getActivity()).setStatusBarColor(Color.argb(128, 0, 0, 0));
+        ((MainActivity) getActivity()).setStatusBarColor(Color.argb(255, 255, 255, 255));
     }
 }
